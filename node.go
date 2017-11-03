@@ -43,7 +43,7 @@ func (path NodePath) Swap(i, j int) {
 }
 
 //XNodePath is  type  for  x sorting of boxes
-type XNodePath struct{
+type XNodePath struct {
 	NodePath
 }
 
@@ -53,7 +53,7 @@ func (path XNodePath) Less(i, j int) bool {
 }
 
 //YNodePath is type  for  y sorting of boxes
-type YNodePath struct{
+type YNodePath struct {
 	NodePath
 }
 
@@ -63,7 +63,7 @@ func (path YNodePath) Less(i, j int) bool {
 }
 
 //XYNodePath is type  for  xy sorting of boxes
-type XYNodePath struct{
+type XYNodePath struct {
 	NodePath
 }
 
@@ -72,11 +72,11 @@ func (path XYNodePath) Less(i, j int) bool {
 	var x, y = 0, 1
 	a, b := path.NodePath[i].BBox(), path.NodePath[j].BBox()
 	d := a[x] - b[x]
-	//x's are close enougth to each other
+	//x's are close enough to each other
 	if math.FloatEqual(d, 0.0) {
 		d = a[y] - b[y]
 	}
-	//check if close enougth ot zero
+	//check if close enough ot zero
 	if d < 0 {
 		return true
 	}
@@ -85,41 +85,31 @@ func (path XYNodePath) Less(i, j int) bool {
 
 //NewNode creates a new node
 func NewNode(item BoxObj, height int, leaf bool, children []*Node) *Node {
-	bbox := item.BBox().Clone()
-	node := Node{
+	return &Node{
 		item:     item,
-		bbox:     bbox,
+		bbox:     item.BBox().Clone(),
 		height:   height,
 		leaf:     leaf,
 		children: children,
 	}
-	return &node
 }
 
 //Node type for internal node
 func newLeafNode(item BoxObj) *Node {
-	bbox := item.BBox()
-	chs := make([]*Node, 0)
 	return &Node{
-		item    :   item,
-		bbox    :   bbox,
-		height  :   1,
-		leaf    :   true,
-		children:   chs,
+		item:     item,
+		bbox:     item.BBox(),
+		height:   1,
+		leaf:     true,
+		children: []*Node{},
 	}
 }
 
 //Constructs children of node
 func makeChildren(items []BoxObj) []*Node {
-	chs := make([]*Node, len(items))
+	var chs = make([]*Node, len(items))
 	for i := range items {
 		chs[i] = newLeafNode(items[i])
 	}
 	return chs
 }
-
-
-
-
-
-

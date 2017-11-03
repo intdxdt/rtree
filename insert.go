@@ -16,8 +16,8 @@ func (tree *RTree) Insert(item BoxObj) *RTree {
 
 //insert - private
 func (tree *RTree) insert(item BoxObj, level int) {
-	bbox := item.BBox()
-	insertPath := make([]*Node, 0)
+	var bbox = item.BBox()
+	var insertPath = make([]*Node, 0)
 
 	// find the best node for accommodating the item, saving all nodes along the path too
 	node, insertPath := chooseSubtree(bbox, tree.Data, level, insertPath)
@@ -96,22 +96,22 @@ func extend(a, b *mbr.MBR) *mbr.MBR {
 	return a
 }
 
-//bboxArea computes area of bounding box
+//computes area of bounding box
 func bboxArea(a *mbr.MBR) float64 {
 	return (a[x2] - a[x1]) * (a[y2] - a[y1])
 }
 
-//bboxMargin computes box margin
+//computes box margin
 func bboxMargin(a *mbr.MBR) float64 {
 	return (a[x2] - a[x1]) + (a[y2] - a[y1])
 }
 
-//enlargedArea computes enlarged area given two mbrs
+//computes enlarged area given two mbrs
 func enlargedArea(a, b *mbr.MBR) float64 {
 	return (max(a[x2], b[x2]) - min(a[x1], b[x1])) * (max(a[y2], b[y2]) - min(a[y1], b[y1]))
 }
 
-//intersectionArea computes the intersection area of two mbrs
+//computes the intersection area of two mbrs
 func intersectionArea(a, b *mbr.MBR) float64 {
 	var minx, miny, maxx, maxy = a[x1], a[y1], a[x2], a[y2]
 

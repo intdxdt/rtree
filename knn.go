@@ -26,7 +26,7 @@ func (tree *RTree) KNN(
 	var node = tree.Data
 	var result = make([]BoxObj, 0)
 	var child *Node
-	var queue = heap.NewHeap(kobjCmp, heap.NewHeapType().AsMin())
+	var queue = heap.NewHeap(kobj_cmp, heap.NewHeapType().AsMin())
 	var stop, pred bool
 	var dist float64
 
@@ -96,7 +96,7 @@ func (kobj *KObj) GetItem() BoxObj {
 	return kobj.node.GetItem()
 }
 
-//BBox - satifies BoxObj interface
+//BBox - satisfies BoxObj interface
 func (kobj *KObj) BBox() *mbr.MBR {
 	return kobj.node.BBox()
 }
@@ -107,8 +107,8 @@ func (kobj *KObj) String() string {
 	return fmt.Sprintf("%v -> %v", nstr, kobj.dist)
 }
 
-//Compare - satifies Item interface
-func kobjCmp(a interface{}, b interface{}) int {
+//Compare - cmp interface
+func kobj_cmp(a interface{}, b interface{}) int {
 	self, other := a.(*KObj), b.(*KObj)
 	dx := self.dist - other.dist
 	if math.FloatEqual(dx, 0.0) {
