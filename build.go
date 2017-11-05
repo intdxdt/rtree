@@ -29,12 +29,7 @@ func (tree *RTree)  _build(items []BoxObj, left, right, height int) *Node {
 
     // TODO eliminate recursion?
 
-    node = NewNode(
-        emptyMbr(),
-        height,
-        false,
-        make([]*Node, 0),
-    )
+    node = NewNode(emptyMbr(), height, false, make([]*Node, 0))
 
     // split the items into M mostly square tiles
 
@@ -51,8 +46,7 @@ func (tree *RTree)  _build(items []BoxObj, left, right, height int) *Node {
         for j = i; j <= right2; j += N2 {
             right3 = minInt(j + N2 - 1, right2)
             // pack each entry recursively
-            new_node := tree._build(items, j, right3, height - 1)
-            node.addChild(new_node)
+            node.addChild(tree._build(items, j, right3, height - 1))
         }
     }
 

@@ -12,11 +12,8 @@ func predicate(_ *KObj) (bool, bool) {
 }
 
 func (tree *RTree) KNN(
-	query BoxObj,
-	limit int,
-	score func(BoxObj, BoxObj) float64,
-	predicates ...func(*KObj) (bool, bool),
-) []BoxObj {
+	query BoxObj, limit int, score func(BoxObj, BoxObj) float64,
+	predicates ...func(*KObj) (bool, bool)) []BoxObj {
 
 	var predFn = predicate
 	if len(predicates) > 0 {
@@ -103,8 +100,7 @@ func (kobj *KObj) BBox() *mbr.MBR {
 
 //String representation of knn object
 func (kobj *KObj) String() string {
-	nstr := kobj.node.bbox.String()
-	return fmt.Sprintf("%v -> %v", nstr, kobj.dist)
+	return fmt.Sprintf("%v -> %v", kobj.node.bbox.String(), kobj.dist)
 }
 
 //Compare - cmp interface
