@@ -17,7 +17,7 @@ func NewRTree(nodeCapacity int) *RTree {
     self  := &RTree{}
     self.Clear()
 
-    if nodeCapacity == 0 {
+    if nodeCapacity <= 0 {
         nodeCapacity = 9
     }
     // max entries in a node is 9 by default min node fill is 40% for best performance
