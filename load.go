@@ -27,9 +27,9 @@ func (tree *RTree) Load(data []BoxObj) *RTree {
         return tree
     }
 
-    _data := make([]BoxObj, len(data))
-	copy(_data, data)
-    data = _data
+    temp := make([]BoxObj, len(data))
+	copy(temp, data)
+    data = temp
 
     // recursively build the tree with the given data from stratch using OMT algorithm
     node = tree._build(data, 0, len(data) - 1, 0)

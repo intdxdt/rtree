@@ -23,11 +23,11 @@ func distBBox(node *Node, k, p int) *mbr.MBR {
 
 //allDistMargin computes total margin of all possible split distributions.
 //Each node is at least m full.
-func (tree *RTree) allDistMargin(node *Node, m, M int, sort_by SortBy) float64 {
-	if sort_by == ByX {
+func (tree *RTree) allDistMargin(node *Node, m, M int, sortBy SortBy) float64 {
+	if sortBy == ByX {
 		sort.Sort(XNodePath{node.children})
         //bubbleAxis(*node.getChildren(), ByX, ByY)
-	} else if sort_by == ByY {
+	} else if sortBy == ByY {
 		sort.Sort(YNodePath{node.children})
         //bubbleAxis(*node.getChildren(), ByY, ByX)
 	}

@@ -140,15 +140,16 @@ func intersectionArea(a, b *mbr.MBR) float64 {
 
 //contains tests whether a contains b
 func contains(a, b *mbr.MBR) bool {
-	return b[x1] >= a[x1] &&
-		b[x2] <= a[x2] &&
-		b[y1] >= a[y1] &&
-		b[y2] <= a[y2]
+	return  b[x1] >= a[x1] &&
+			b[x2] <= a[x2] &&
+			b[y1] >= a[y1] &&
+			b[y2] <= a[y2]
 }
 
 //intersects tests a intersect b (mbr)
 func intersects(a, b *mbr.MBR) bool {
-	return !(b[x1] > a[x2] ||
+	return !(
+		b[x1] > a[x2] ||
 		b[x2] < a[x1] ||
 		b[y1] > a[y2] ||
 		b[y2] < a[y1])
