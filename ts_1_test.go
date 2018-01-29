@@ -70,9 +70,9 @@ func TestRtree(t *testing.T) {
 
 		tree := NewRTree(9)
 		length := len(data)
-		data_oneByone := data[:length:length]
-		for i := range data_oneByone {
-			tree.Insert(&data_oneByone[i])
+		data1By1 := data[:length:length]
+		for i := range data1By1 {
+			tree.Insert(&data1By1[i])
 		}
 
 		g.It("same root bounds for : bulkload & single insert ", func() {

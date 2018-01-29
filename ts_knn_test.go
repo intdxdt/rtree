@@ -28,7 +28,7 @@ func init_knn() {
 		{99, 21, 100, 25}, {79, 3, 79, 4}, {87, 1, 87, 5}, {9, 77, 9, 81}, {23, 25, 25, 29}, {83, 48, 86, 51}, {79, 94, 79, 95}, {33, 95, 33, 99},
 		{1, 14, 1, 14}, {33, 77, 34, 77}, {94, 56, 98, 59}, {75, 25, 78, 26}, {17, 73, 20, 74}, {11, 3, 12, 4}, {45, 12, 47, 12}, {38, 39, 39, 39},
 		{99, 3, 103, 5}, {41, 92, 44, 96}, {79, 40, 79, 41}, {29, 2, 29, 4},
-	};
+	}
 	for _, d := range _d {
 		knn_data = append(knn_data, d)
 	}
@@ -37,12 +37,12 @@ func init_knn() {
 func found_in(needle *mbr.MBR, haystack []*mbr.MBR) bool {
 	found := false
 	for _, hay := range haystack {
-		found = needle.Equals(hay);
+		found = needle.Equals(hay)
 		if found {
 			break
 		}
 	}
-	return found;
+	return found
 }
 
 func TestRtreeKNN(t *testing.T) {
@@ -60,7 +60,7 @@ func TestRtreeKNN(t *testing.T) {
 				{57, 36, 61, 40},
 			}
 			for _, n := range nn {
-				g.Assert(found_in(n.BBox(), result)).IsTrue();
+				g.Assert(found_in(n.BBox(), result)).IsTrue()
 			}
 
 			nn = rt.KNN(mbr.NewMBR(40, 40, 40, 40), 1000, scoreFn)
@@ -159,7 +159,7 @@ func TestRtreeKNNPredicate(t *testing.T) {
 			predicate := func(v *KObj) (bool, bool) {
 				return v.GetItem().(*RichData).version < 5, false
 			}
-			result := rt.KNN(mbr.NewMBR(2, 4, 2, 4), 1, scoreFn, predicate);
+			result := rt.KNN(mbr.NewMBR(2, 4, 2, 4), 1, scoreFn, predicate)
 
 			g.Assert(len(result)).Equal(1)
 
