@@ -170,7 +170,7 @@ func TestRtreeKNNPredicate(t *testing.T) {
 			var expects_version = 2
 
 			g.Assert(v.MBR.BBox().Equals(expects_mbr)).IsTrue()
-			g.Assert(expects_version).Equal(expects_version)
+			g.Assert(v.version).Equal(expects_version)
 		})
 	})
 }
