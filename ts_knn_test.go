@@ -4,6 +4,7 @@ import (
 	"testing"
 	"github.com/intdxdt/mbr"
 	"github.com/franela/goblin"
+	"time"
 )
 
 var knn_data = make([]BoxObj, 0)
@@ -150,6 +151,7 @@ func TestRtreeKNNPredicate(t *testing.T) {
 	g := goblin.Goblin(t)
 	g.Describe("Rtree KNN Predicate", func() {
 		g.It("find n neighbours that do satisfy a given predicate", func() {
+			g.Timeout(1*time.Hour)
 			rt := NewRTree(9)
 			rt.Load(fn_rich_data())
 			scoreFn := func(query, boxer BoxObj) float64 {

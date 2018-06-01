@@ -25,15 +25,12 @@ func (o Boxes) Less(i, j int) bool {
 	var x, y = 0, 1
 	a, b := o[i].BBox(), o[j].BBox()
 	d := a[x] - b[x]
-	//x's are close enougth to each other
+	//x's are close enough to each other
 	if math.FloatEqual(d, 0.0) {
 		d = a[y] - b[y]
 	}
-	//check if close enougth ot zero
-	if d < 0 {
-		return true
-	}
-	return false
+	//check if close enough ot zero
+	return  d < 0
 }
 
 func someData(n int) []*mbr.MBR {
@@ -66,6 +63,7 @@ func TestRtreeRbush(t *testing.T) {
 
 	g.Describe("Rtree Tests - From Rbush", func() {
 		g.It("should test load 9 & 10", func() {
+
 			var tree0 = NewRTree(0).LoadBoxes(someData(0))
 			g.Assert(tree0.Data.height).Equal(1)
 
@@ -113,7 +111,8 @@ func TestRtreeRbush(t *testing.T) {
 		g.It("#load uses standard insertion when given a low number of items", func() {
 			var tree = NewRTree(8).LoadBoxes(
 				data,
-			).LoadBoxes(data[0:3])
+			);
+			tree.LoadBoxes(data[0:3])
 			var tree2 = NewRTree(8).LoadBoxes(data).Insert(
 				data[0],
 			).Insert(data[1]).Insert(data[2])

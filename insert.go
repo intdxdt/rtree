@@ -31,14 +31,9 @@ func (tree *RTree) insert(item BoxObj, level int) {
 	extend(node.bbox, bbox)
 
 	// split on node overflow propagate upwards if necessary
-	for level >= 0 {
-		//fmt.Printf("size of insert path: %v\n", insertPath[level].Size())
-		if len(insertPath[level].children) > tree.maxEntries {
-			tree.split(insertPath, level)
-			level--
-		} else {
-			break
-		}
+	for (level >= 0) && (len(insertPath[level].children) > tree.maxEntries) {
+		tree.split(insertPath, level)
+		level--
 	}
 
 	// adjust bboxes along the insertion path
@@ -140,17 +135,17 @@ func intersectionArea(a, b *mbr.MBR) float64 {
 
 //contains tests whether a contains b
 func contains(a, b *mbr.MBR) bool {
-	return  b[x1] >= a[x1] &&
-			b[x2] <= a[x2] &&
-			b[y1] >= a[y1] &&
-			b[y2] <= a[y2]
+	return b[x1] >= a[x1] &&
+		b[x2] <= a[x2] &&
+		b[y1] >= a[y1] &&
+		b[y2] <= a[y2]
 }
 
 //intersects tests a intersect b (mbr)
 func intersects(a, b *mbr.MBR) bool {
 	return !(
 		b[x1] > a[x2] ||
-		b[x2] < a[x1] ||
-		b[y1] > a[y2] ||
-		b[y2] < a[y1])
+			b[x2] < a[x1] ||
+			b[y1] > a[y2] ||
+			b[y2] < a[y1])
 }
