@@ -19,9 +19,6 @@ func emptyMbr() *mbr.MBR {
 	}
 }
 
-func emptyChildren(length int) []*Node {
-	return make([]*Node, length)
-}
 
 func (tree *RTree) Clear() *RTree {
 	node := NewNode(&universe{}, 1, true, make([]*Node, 0))

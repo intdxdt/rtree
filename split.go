@@ -7,19 +7,19 @@ import (
 
 // _split overflowed node into two
 func (tree *RTree) split(insertPath []*Node, level int) {
-	node := insertPath[level]
-	newNode := NewNode(
+	var node = insertPath[level]
+	var newNode = NewNode(
 		emptyMbr(),
 		node.height,
 		node.leaf,
-		emptyChildren(0),
+		[]*Node{},
 	)
 
-	M := len(node.children)
-	m := tree.minEntries
+	var M = len(node.children)
+	var m = tree.minEntries
 
 	tree.chooseSplitAxis(node, m, M)
-	at := tree.chooseSplitIndex(node, m, M)
+	var at = tree.chooseSplitIndex(node, m, M)
 	//perform split at index
 	node.children, newNode.children = splitAtIndex(node.children, at)
 
@@ -36,9 +36,8 @@ func (tree *RTree) split(insertPath []*Node, level int) {
 //_splitRoot splits the root of tree.
 func (tree *RTree) splitRoot(node, newNode *Node) {
 	// split root node
-	path := emptyChildren(2)
-	path[0], path[1] = node, newNode
-	root := NewNode(emptyMbr(), node.height+1, false, path)
+	var path = []*Node{node, newNode}
+	var root = NewNode(emptyMbr(), node.height+1, false, path)
 	tree.Data = root
 	calcBBox(tree.Data)
 }
@@ -81,8 +80,8 @@ func (tree *RTree) chooseSplitIndex(node *Node, m, M int) int {
 //_chooseSplitAxis selects split axis : sorts node children
 //by the best axis for split.
 func (tree *RTree) chooseSplitAxis(node *Node, m, M int) {
-	xMargin := tree.allDistMargin(node, m, M, ByX)
-	yMargin := tree.allDistMargin(node, m, M, ByY)
+	var xMargin = tree.allDistMargin(node, m, M, ByX)
+	var yMargin = tree.allDistMargin(node, m, M, ByY)
 
 	// if total distributions margin value is minimal for x, sort by minX,
 	// otherwise it's already sorted by minY
