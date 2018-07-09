@@ -14,7 +14,7 @@ const (
 
 
 const (
-    x1 int = iota
+    x1 = iota
     y1
     x2
     y2

@@ -105,7 +105,7 @@ func bboxMargin(a *mbr.MBR) float64 {
 //computes enlarged area given two mbrs
 func enlargedArea(a, b *mbr.MBR) float64 {
 	return (max(a[x2], b[x2]) - min(a[x1], b[x1])) *
-		   (max(a[y2], b[y2]) - min(a[y1], b[y1]))
+		(max(a[y2], b[y2]) - min(a[y1], b[y1]))
 }
 
 //computes the intersection area of two mbrs
@@ -137,16 +137,17 @@ func intersectionArea(a, b *mbr.MBR) float64 {
 
 //contains tests whether a contains b
 func contains(a, b *mbr.MBR) bool {
-	return b[x1] >= a[x1] &&
+	return (
+		b[x1] >= a[x1] &&
 		b[x2] <= a[x2] &&
 		b[y1] >= a[y1] &&
-		b[y2] <= a[y2]
+		b[y2] <= a[y2])
 }
 
 //intersects tests a intersect b (mbr)
 func intersects(a, b *mbr.MBR) bool {
 	return !(
-		b[x1] > a[x2] ||
+			b[x1] > a[x2] ||
 			b[x2] < a[x1] ||
 			b[y1] > a[y2] ||
 			b[y2] < a[y1])

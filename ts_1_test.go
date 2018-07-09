@@ -5,7 +5,6 @@ import (
 	"github.com/intdxdt/mbr"
 	"github.com/franela/goblin"
 	"time"
-	"fmt"
 )
 
 type Pnt struct {
@@ -110,39 +109,39 @@ func TestRtree(t *testing.T) {
 		}
 
 		g.It("same root bounds for : bulkload & single insert ", func() {
-			var node_size int
+			var nodeSize int
 			oneT := NewRTree(9)
-			one_defT := NewRTree(node_size)
+			oneDeft := NewRTree(nodeSize)
 			bulkT := NewRTree(9)
 
 			//one by one
 			length := len(data)
-			data_oneByone := data[:length:length]
-			for i := range data_oneByone {
+			dataOnebyone := data[:length:length]
+			for i := range dataOnebyone {
 				//fmt.Println(i, " -> ", len(oneT.Data.children))
-				oneT.Insert(&data_oneByone[i])
+				oneT.Insert(&dataOnebyone[i])
 			}
 			//fill zero size
-			for i := range data_oneByone {
-				one_defT.Insert(&data_oneByone[i])
+			for i := range dataOnebyone {
+				oneDeft.Insert(&dataOnebyone[i])
 			}
 
-			one_mbr := oneT.Data.bbox
-			one_def_mbr := one_defT.Data.bbox
+			oneMbr := oneT.Data.bbox
+			oneDefMbr := oneDeft.Data.bbox
 
-			fmt.Println(one_mbr.String())
+			//fmt.Println(oneMbr.String())
 
 			//bulkload
-			data_bulkLoad := data[:length:length]
-			bulk_items := make([]BoxObj, len(data_bulkLoad))
-			for i := range bulk_items {
-				bulk_items[i] = &data_bulkLoad[i]
+			dataBulkload := data[:length:length]
+			bulkItems := make([]BoxObj, len(dataBulkload))
+			for i := range bulkItems {
+				bulkItems[i] = &dataBulkload[i]
 			}
-			bulkT.Load(bulk_items)
-			buk_mbr := bulkT.Data.bbox
+			bulkT.Load(bulkItems)
+			bukMbr := bulkT.Data.bbox
 
-			g.Assert(one_mbr).Eql(one_def_mbr)
-			g.Assert(one_mbr).Eql(buk_mbr)
+			g.Assert(oneMbr).Eql(oneDefMbr)
+			g.Assert(oneMbr).Eql(bukMbr)
 			g.Assert(len(bulkT.Data.children)).Equal(len(oneT.Data.children))
 
 			//var tokens = print_RTree(oneT.Data)

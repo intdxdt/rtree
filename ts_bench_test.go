@@ -32,11 +32,8 @@ var N = int(1e6)
 var maxFill = 64
 var BenchData = GenDataItems(N, 1)
 var bboxes100 = GenDataItems(1000, 100*math.Sqrt(0.1))
-
 var bboxes10 = GenDataItems(1000, 10)
-
 var bboxes1 = GenDataItems(1000, 1)
-
 var tree = NewRTree(maxFill).Load(BenchData)
 var box *mbr.MBR
 var foundTotal int
@@ -48,11 +45,13 @@ func Benchmark_Insert_OneByOne_SmallBigData(b *testing.B) {
 	}
 	box = tree.Data.BBox()
 }
+
 func Benchmark_Load_Data(b *testing.B) {
 	var tree = NewRTree(maxFill)
 	tree.Load(BenchData)
 	box = tree.Data.BBox()
 }
+
 func Benchmark_Insert_Load_SmallBigData(b *testing.B) {
 	var tree = NewRTree(maxFill)
 	tree.Load(BenchData)
@@ -77,6 +76,7 @@ func BenchmarkRTree_Search_1000_1pct(b *testing.B) {
 	}
 	foundTotal = found
 }
+
 func BenchmarkRTree_Search_1000_01pct(b *testing.B) {
 	var found = 0
 	var items []*Node

@@ -7,8 +7,8 @@ import (
 //Search item
 func (tree *RTree) Search(bbox *mbr.MBR) []*Node {
 
-	node := tree.Data
-	result := make([]*Node, 0)
+	var result []*Node
+	var node = tree.Data
 
 	if !intersects(bbox, node.bbox) {
 		return result
@@ -70,4 +70,3 @@ func all(node *Node, result []*Node) []*Node {
 
 	return result
 }
-

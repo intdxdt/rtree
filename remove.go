@@ -33,7 +33,7 @@ func popIndex(indxs *[]int) int {
 
 //remove node at given index from node slice.
 func removeNode(a []*Node, i int) []*Node {
-	n := len(a) - 1
+	var n = len(a) - 1
 	if i > n {
 		return a
 	}
