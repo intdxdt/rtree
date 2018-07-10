@@ -5,7 +5,7 @@ import (
 )
 
 //LoadBoxes loads bounding boxes
-func (tree *RTree)  LoadBoxes(data []*mbr.MBR) *RTree {
+func (tree *RTree)  LoadBoxes(data []mbr.MBR) *RTree {
     items := make([]BoxObj, len(data))
     for i:=0 ; i < len(data) ; i++{
         items[i] = data[i]

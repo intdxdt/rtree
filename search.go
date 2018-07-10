@@ -5,12 +5,12 @@ import (
 )
 
 //Search item
-func (tree *RTree) Search(bbox *mbr.MBR) []*Node {
+func (tree *RTree) Search(bbox mbr.MBR) []*Node {
 
 	var result []*Node
 	var node = tree.Data
 
-	if !intersects(bbox, node.bbox) {
+	if !intersects(&bbox, &node.bbox) {
 		return result
 	}
 
@@ -21,12 +21,12 @@ func (tree *RTree) Search(bbox *mbr.MBR) []*Node {
 	for {
 		for i, length := 0, len(node.children); i < length; i++ {
 			child = node.children[i]
-			childBBox = child.bbox
+			childBBox = &child.bbox
 
-			if intersects(bbox, childBBox) {
+			if intersects(&bbox, childBBox) {
 				if node.leaf {
 					result = append(result, child)
-				} else if contains(bbox, childBBox) {
+				} else if contains(&bbox, childBBox) {
 					result = all(child, result)
 				} else {
 					nodesToSearch = append(nodesToSearch, child)

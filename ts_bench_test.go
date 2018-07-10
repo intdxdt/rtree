@@ -8,10 +8,10 @@ import (
 	"github.com/intdxdt/mbr"
 )
 
-func RandBox(size float64, rnd *rand.Rand) *mbr.MBR {
+func RandBox(size float64, rnd *rand.Rand) mbr.MBR {
 	var x = rnd.Float64() * (100.0 - size)
 	var y = rnd.Float64() * (100.0 - size)
-	return &mbr.MBR{
+	return mbr.MBR{
 		x, y,
 		x + size*rnd.Float64(),
 		y + size*rnd.Float64(),
@@ -35,7 +35,7 @@ var bboxes100 = GenDataItems(1000, 100*math.Sqrt(0.1))
 var bboxes10 = GenDataItems(1000, 10)
 var bboxes1 = GenDataItems(1000, 1)
 var tree = NewRTree(maxFill).Load(BenchData)
-var box *mbr.MBR
+var box mbr.MBR
 var foundTotal int
 
 func Benchmark_Insert_OneByOne_SmallBigData(b *testing.B) {

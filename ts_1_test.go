@@ -11,8 +11,8 @@ type Pnt struct {
 	x, y float64
 }
 
-func (pt *Pnt) BBox() *mbr.MBR {
-	return &mbr.MBR{pt.x, pt.y, pt.x + 2, pt.y + 2}
+func (pt *Pnt) BBox() mbr.MBR {
+	return mbr.MBR{pt.x, pt.y, pt.x + 2, pt.y + 2}
 }
 
 type nodeParent struct {
@@ -80,7 +80,7 @@ func TestRtree(t *testing.T) {
 			g.Assert(len(b.children)).Equal(0)
 
 			g.Assert(b.item).Equal(item)
-			mbox := &mbr.MBR{0, 0, 2, 2}
+			mbox := mbr.MBR{0, 0, 2, 2}
 
 			g.Assert(b.BBox()).Equal(mbox)
 			g.Assert(n.BBox()).Equal(mbox)
@@ -110,32 +110,32 @@ func TestRtree(t *testing.T) {
 
 		g.It("same root bounds for : bulkload & single insert ", func() {
 			var nodeSize int
-			oneT := NewRTree(9)
-			oneDeft := NewRTree(nodeSize)
-			bulkT := NewRTree(9)
+			var oneT = NewRTree(9)
+			var oneDeft = NewRTree(nodeSize)
+			var bulkT = NewRTree(9)
 
 			//one by one
-			length := len(data)
-			dataOnebyone := data[:length:length]
+			var length = len(data)
+			var dataOnebyone = data[:length:length]
 			for i := range dataOnebyone {
 				//fmt.Println(i, " -> ", len(oneT.Data.children))
-				oneT.Insert(&dataOnebyone[i])
+				oneT.Insert(dataOnebyone[i])
 			}
 			//fill zero size
 			for i := range dataOnebyone {
-				oneDeft.Insert(&dataOnebyone[i])
+				oneDeft.Insert(dataOnebyone[i])
 			}
 
-			oneMbr := oneT.Data.bbox
-			oneDefMbr := oneDeft.Data.bbox
+			var oneMbr = oneT.Data.bbox
+			var oneDefMbr = oneDeft.Data.bbox
 
 			//fmt.Println(oneMbr.String())
 
 			//bulkload
-			dataBulkload := data[:length:length]
-			bulkItems := make([]BoxObj, len(dataBulkload))
+			var dataBulkload = data[:length:length]
+			var bulkItems = make([]BoxObj, len(dataBulkload))
 			for i := range bulkItems {
-				bulkItems[i] = &dataBulkload[i]
+				bulkItems[i] = dataBulkload[i]
 			}
 			bulkT.Load(bulkItems)
 			bukMbr := bulkT.Data.bbox
@@ -166,13 +166,13 @@ func TestRtree(t *testing.T) {
 			{60.35181123067779, 50.30720879159393, 66.40423614499642, 62.711248070454005}, {12.818633233242565, 80.69085735063159, 25.51374909020891, 93.22537975149076}, {13.89435574446365, 30.374627423660982, 26.014177608552792, 40.22893652344269}, {68.59949104329682, 71.57717815724429, 71.14413101711249, 81.32143731631942}, {8.759053910523154, 40.17136447593845, 22.076247428918848, 51.97034411093291}, {75.0237223114521, 10.812195153356786, 75.45859644475163, 24.680056123348074}, {37.640987086884465, 44.31736944555115, 46.79079124130418, 52.298119297002756}, {77.86465045295246, 69.74685405122065, 91.0727578759392, 81.32602647164121}, {41.571023531510896, 41.188931957868, 47.81613155473583, 53.78551712929363}, {46.21623238891625, 12.566288400974617, 60.42998852835609, 23.520076065312416}, {39.651498265328506, 13.503482197678323, 50.2456922936693, 17.970333385957133}, {22.002987425318885, 4.223514231931571, 24.39665459195155, 17.79996696134728}, {10.238509846935935, 17.775671898372956, 24.90139389081459, 30.900047607940877}, {11.945673076143192, 11.005643838128806, 14.458677679728162, 25.935774067123525}, {34.15254570484473, 32.9087837466544, 39.806374568647804, 45.792474254223166}, {1.2619249479259986, 73.38259039620652, 5.732709854315865, 82.08100065666045},
 			{68.88687814624431, 70.06499982957165, 70.86758866753506, 78.39070584782843}, {53.346140703038856, 38.61621943306142, 58.18001677406793, 46.227279405415416}, {60.91283806646173, 5.328797186659199, 70.97382774644399, 11.165367727083606},
 		}
-		query := &mbr.MBR{0., 0., 100, 100}
-		var node_size int
-		tree := NewRTree(node_size)
-		length := len(data)
-		data_oneByone := data[:length:length]
-		for i := range data_oneByone {
-			tree.Insert(&data_oneByone[i])
+		var query = mbr.MBR{0, 0, 100, 100}
+		var nodeSize int
+		var tree = NewRTree(nodeSize)
+		var length = len(data)
+		var dataOnebyone = data[:length:length]
+		for i := range dataOnebyone {
+			tree.Insert(&dataOnebyone[i])
 		}
 
 		g.It("same root bounds for : bulkload & single insert ", func() {
@@ -201,29 +201,29 @@ func TestRtree(t *testing.T) {
 
 		//queries
 		//nothing
-		query1 := &mbr.MBR{81.59858271428983, 88.95212575682031, 87.00714129337072, 92.42905627194374}
-		query2 := &mbr.MBR{82.17807113347706, 83.15724156494792, 87.39346690616222, 84.70254401611389}
-		query3 := &mbr.MBR{84.10969919743454, 72.14696160039038, 86.23449006778775, 79.10082263063724}
-		query4 := &mbr.MBR{21.298871774427138, 1.1709155631470283, 36.23985259304277, 20.747325333798532}
-		query5 := &mbr.MBR{0., 0., 100, 100}
-		query6 := &mbr.MBR{182.17619056720642, 15.748541593521262, 205.43811579298725, 65.97783146157896}
+		query1 := mbr.MBR{81.59858271428983, 88.95212575682031, 87.00714129337072, 92.42905627194374}
+		query2 := mbr.MBR{82.17807113347706, 83.15724156494792, 87.39346690616222, 84.70254401611389}
+		query3 := mbr.MBR{84.10969919743454, 72.14696160039038, 86.23449006778775, 79.10082263063724}
+		query4 := mbr.MBR{21.298871774427138, 1.1709155631470283, 36.23985259304277, 20.747325333798532}
+		query5 := mbr.MBR{0., 0., 100, 100}
+		query6 := mbr.MBR{182.17619056720642, 15.748541593521262, 205.43811579298725, 65.97783146157896}
 
 		tree := NewRTree(9)
-		bulk_tree := NewRTree(9)
+		bulkTree := NewRTree(9)
 
 		length := len(data)
-		data_oneByone := data[:length:length]
-		data_bulkLoad := data[:length:length]
-		bulk_items := make([]BoxObj, len(data_bulkLoad))
+		dataOnebyone := data[:length:length]
+		dataBulkload := data[:length:length]
+		bulkItems := make([]BoxObj, len(dataBulkload))
 
-		for i := range bulk_items {
-			bulk_items[i] = (&data_bulkLoad[i])
+		for i := range bulkItems {
+			bulkItems[i] = (&dataBulkload[i])
 		}
 
-		for i := range data_oneByone {
-			tree.Insert(&data_oneByone[i])
+		for i := range dataOnebyone {
+			tree.Insert(&dataOnebyone[i])
 		}
-		bulk_tree.Load(bulk_items)
+		bulkTree.Load(bulkItems)
 
 		g.It("should return items found - one-by-one", func() {
 			res1 := tree.Search(query1)
@@ -243,12 +243,12 @@ func TestRtree(t *testing.T) {
 		})
 
 		g.It("should return items found - bulk loaded tree", func() {
-			res1 := bulk_tree.Search(query1)
-			res2 := bulk_tree.Search(query2)
-			res3 := bulk_tree.Search(query3)
-			res4 := bulk_tree.Search(query4)
-			res5 := bulk_tree.Search(query5)
-			res6 := bulk_tree.Search(query6)
+			res1 := bulkTree.Search(query1)
+			res2 := bulkTree.Search(query2)
+			res3 := bulkTree.Search(query3)
+			res4 := bulkTree.Search(query4)
+			res5 := bulkTree.Search(query5)
+			res6 := bulkTree.Search(query6)
 
 			g.Assert(len(res1)).Equal(0)
 			g.Assert(len(res2)).Equal(0)

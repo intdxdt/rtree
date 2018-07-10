@@ -23,7 +23,7 @@ const (
 type compareNode func(*BoxObj, *BoxObj) float64
 
 type BoxObj interface {
-    BBox() *mbr.MBR
+    BBox() mbr.MBR
 }
 
 func maxEntries(x int) int {

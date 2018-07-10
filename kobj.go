@@ -28,7 +28,7 @@ func (kobj *KObj) GetItem() BoxObj {
 }
 
 //BBox - satisfies BoxObj interface
-func (kobj *KObj) BBox() *mbr.MBR {
+func (kobj *KObj) BBox() mbr.MBR {
 	return kobj.node.BBox()
 }
 

@@ -116,7 +116,7 @@ func (tree *RTree) Remove(item BoxObj) *RTree {
 
 		}
 
-		if !goingUp && !node.leaf && contains(node.bbox, bbox) {
+		if !goingUp && !node.leaf && contains(&node.bbox, &bbox) {
 			// go down
 			path = append(path, node)
 			indexes = append(indexes, i)

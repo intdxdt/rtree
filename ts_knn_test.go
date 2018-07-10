@@ -7,15 +7,15 @@ import (
 	"time"
 )
 
-var knn_data = make([]BoxObj, 0)
+var knnData []BoxObj
 
 func scoreFn(query, boxer BoxObj) float64 {
 	return query.BBox().Distance(boxer.BBox())
 }
 
 func init_knn() {
-	knn_data = make([]BoxObj, 0)
-	var _d = []*mbr.MBR{
+	knnData = make([]BoxObj, 0)
+	var _d = []mbr.MBR{
 		{87, 55, 87, 56}, {38, 13, 39, 16}, {7, 47, 8, 47}, {89, 9, 91, 12}, {4, 58, 5, 60}, {0, 11, 1, 12}, {0, 5, 0, 6}, {69, 78, 73, 78},
 		{56, 77, 57, 81}, {23, 7, 24, 9}, {68, 24, 70, 26}, {31, 47, 33, 50}, {11, 13, 14, 15}, {1, 80, 1, 80}, {72, 90, 72, 91}, {59, 79, 61, 83},
 		{98, 77, 101, 77}, {11, 55, 14, 56}, {98, 4, 100, 6}, {21, 54, 23, 58}, {44, 74, 48, 74}, {70, 57, 70, 61}, {32, 9, 33, 12}, {43, 87, 44, 91},
@@ -31,11 +31,11 @@ func init_knn() {
 		{99, 3, 103, 5}, {41, 92, 44, 96}, {79, 40, 79, 41}, {29, 2, 29, 4},
 	}
 	for _, d := range _d {
-		knn_data = append(knn_data, d)
+		knnData = append(knnData, d)
 	}
 }
 
-func found_in(needle *mbr.MBR, haystack []*mbr.MBR) bool {
+func found_in(needle mbr.MBR, haystack []mbr.MBR) bool {
 	found := false
 	for _, hay := range haystack {
 		found = needle.Equals(hay)
@@ -52,9 +52,9 @@ func TestRtreeKNN(t *testing.T) {
 		init_knn()
 		g.It("finds n neighbours", func() {
 			rt := NewRTree(9)
-			rt.Load(knn_data)
-			nn := rt.KNN(mbr.NewMBR(40, 40, 40, 40), 10, scoreFn)
-			result := []*mbr.MBR{
+			rt.Load(knnData)
+			nn := rt.KNN(mbr.CreateMBR(40, 40, 40, 40), 10, scoreFn)
+			result := []mbr.MBR{
 				{38, 39, 39, 39}, {35, 39, 38, 40}, {34, 43, 36, 44},
 				{29, 42, 33, 42}, {48, 38, 48, 40}, {31, 47, 33, 50},
 				{34, 29, 34, 32}, {29, 45, 31, 47}, {39, 52, 39, 56},
@@ -64,8 +64,8 @@ func TestRtreeKNN(t *testing.T) {
 				g.Assert(found_in(n.BBox(), result)).IsTrue()
 			}
 
-			nn = rt.KNN(mbr.NewMBR(40, 40, 40, 40), 1000, scoreFn)
-			g.Assert(len(nn)).Equal(len(knn_data))
+			nn = rt.KNN(mbr.CreateMBR(40, 40, 40, 40), 1000, scoreFn)
+			g.Assert(len(nn)).Equal(len(knnData))
 		})
 	})
 }
@@ -78,9 +78,9 @@ func TestRtreeKNNPredScore(t *testing.T) {
 		g.It("finds n neighbours with geoms", func() {
 
 			var scoreFunc = func(query, obj BoxObj) float64 {
-				qg := query.(*mbr.MBR)
+				var qg = query.(mbr.MBR)
 				var dist = 0.0
-				if ng, ok := obj.(*mbr.MBR); ok {
+				if ng, ok := obj.(mbr.MBR); ok {
 					dist = qg.Distance(ng)
 				} else {
 					dist = qg.BBox().Distance(obj.BBox())
@@ -88,22 +88,22 @@ func TestRtreeKNNPredScore(t *testing.T) {
 				return dist
 			}
 
-			var predicate_mbr = make([]*mbr.MBR, 0)
+			var predicateMbr []mbr.MBR
 
 			var createPredicate = func(dist float64) func(*KObj) (bool, bool) {
 				return func(candidate *KObj) (bool, bool) {
 					g.Assert(candidate.IsItem()).IsTrue()
 					if candidate.Score() <= dist {
-						predicate_mbr = append(predicate_mbr, candidate.BBox())
+						predicateMbr = append(predicateMbr, candidate.BBox())
 						return true, false
 					}
 					return false, true
 				}
 			}
 			rt := NewRTree(9)
-			rt.Load(knn_data)
+			rt.Load(knnData)
 			prefFn := createPredicate(6)
-			query := mbr.NewMBR(
+			query := mbr.CreateMBR(
 				74.88825108886668, 82.678427498132,
 				74.88825108886668, 82.678427498132,
 			)
@@ -112,7 +112,8 @@ func TestRtreeKNNPredScore(t *testing.T) {
 
 			g.Assert(len(res)).Equal(2)
 			for i, r := range res {
-				g.Assert(r.BBox().Equals(predicate_mbr[i])).IsTrue()
+				var rbox = r.BBox()
+				g.Assert(rbox.Equals(predicateMbr[i])).IsTrue()
 			}
 		})
 	})
@@ -161,16 +162,15 @@ func TestRtreeKNNPredicate(t *testing.T) {
 			predicate := func(v *KObj) (bool, bool) {
 				return v.GetItem().(*RichData).version < 5, false
 			}
-			result := rt.KNN(mbr.NewMBR(2, 4, 2, 4), 1, scoreFn, predicate)
+			result := rt.KNN(mbr.CreateMBR(2, 4, 2, 4), 1, scoreFn, predicate)
 
 			g.Assert(len(result)).Equal(1)
 
 			var v = result[0].(*RichData)
-			var expects_mbr = &mbr.MBR{3, 3, 3, 3}
-			var expects_version = 2
+			var expectsVersion = 2
 
-			g.Assert(v.MBR.BBox().Equals(expects_mbr)).IsTrue()
-			g.Assert(v.version).Equal(expects_version)
+			g.Assert(v.MBR.Equals(mbr.MBR{3, 3, 3, 3})).IsTrue()
+			g.Assert(v.version).Equal(expectsVersion)
 		})
 	})
 }

@@ -6,18 +6,18 @@ import (
 
 //Node type for internal node
 type Node struct {
+	children []*Node
 	item     BoxObj
-	bbox     *mbr.MBR
 	height   int
 	leaf     bool
-	children []*Node
+	bbox     mbr.MBR
 }
 
 //NewNode creates a new node
 func NewNode(item BoxObj, height int, leaf bool, children []*Node) *Node {
 	return &Node{
 		item:     item,
-		bbox:     item.BBox().Clone(),
+		bbox:     item.BBox(),
 		height:   height,
 		leaf:     leaf,
 		children: children,
@@ -36,7 +36,7 @@ func newLeafNode(item BoxObj) *Node {
 }
 
 //BBox returns bbox property
-func (n *Node) BBox() *mbr.MBR {
+func (n *Node) BBox() mbr.MBR {
 	return n.bbox
 }
 

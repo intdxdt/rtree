@@ -53,8 +53,8 @@ func (tree *RTree) chooseSplitIndex(node *Node, m, M int) int {
 		bbox1 := distBBox(node, 0, i)
 		bbox2 := distBBox(node, i, M)
 
-		overlap = intersectionArea(bbox1, bbox2)
-		area = bboxArea(bbox1) + bboxArea(bbox2)
+		overlap = intersectionArea(&bbox1, &bbox2)
+		area = bboxArea(&bbox1) + bboxArea(&bbox2)
 
 		// choose distribution with minimum overlap
 		if overlap < minOverlap {

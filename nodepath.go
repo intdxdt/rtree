@@ -24,7 +24,7 @@ type XNodePath struct {
 
 //Less sorts boxes by ll[x]
 func (path XNodePath) Less(i, j int) bool {
-	return path.NodePath[i].BBox()[0] < path.NodePath[j].BBox()[0]
+	return path.NodePath[i].bbox[0] < path.NodePath[j].bbox[0]
 }
 
 //YNodePath is type  for  y sorting of boxes
