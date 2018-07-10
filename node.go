@@ -16,22 +16,22 @@ type Node struct {
 //NewNode creates a new node
 func NewNode(item BoxObj, height int, leaf bool, children []*Node) *Node {
 	return &Node{
+		children: children,
 		item:     item,
-		bbox:     item.BBox(),
 		height:   height,
 		leaf:     leaf,
-		children: children,
+		bbox:     item.BBox(),
 	}
 }
 
 //Node type for internal node
 func newLeafNode(item BoxObj) *Node {
 	return &Node{
+		children: []*Node{},
 		item:     item,
-		bbox:     item.BBox(),
 		height:   1,
 		leaf:     true,
-		children: []*Node{},
+		bbox:     item.BBox(),
 	}
 }
 
