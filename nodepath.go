@@ -1,9 +1,5 @@
 package rtree
 
-import (
-	"github.com/intdxdt/math"
-)
-
 //NodePath slice of Node
 type NodePath []*Node
 
@@ -34,7 +30,7 @@ type YNodePath struct {
 
 //Less sorts boxes by ll[y]
 func (path YNodePath) Less(i, j int) bool {
-	return path.NodePath[i].BBox()[1] < path.NodePath[j].BBox()[1]
+	return path.NodePath[i].bbox[1] < path.NodePath[j].bbox[1]
 }
 
 //XYNodePath is type  for  xy sorting of boxes
@@ -44,16 +40,9 @@ type XYNodePath struct {
 
 //Less sorts boxes lexicographically
 func (path XYNodePath) Less(i, j int) bool {
-	var x, y = 0, 1
-	a, b := path.NodePath[i].BBox(), path.NodePath[j].BBox()
-	d := a[x] - b[x]
-	//x's are close enough to each other
-	if math.FloatEqual(d, 0.0) {
-		d = a[y] - b[y]
+	var d = path.NodePath[i].bbox[0] - path.NodePath[j].bbox[0]
+	if feq(d, 0.0) {
+		d = path.NodePath[i].bbox[1] - path.NodePath[j].bbox[1]
 	}
-	//check if close enough ot zero
-	if d < 0 {
-		return true
-	}
-	return false
+	return d < 0
 }

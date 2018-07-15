@@ -2,7 +2,7 @@ package rtree
 import "math"
 
 //build
-func (tree *RTree)  _build(items []BoxObj, left, right, height int) *Node {
+func (tree *RTree) buildTree(items []*Obj, left, right, height int) *Node {
 
     var N = float64(right - left + 1)
     var M = float64(tree.maxEntries)
@@ -10,7 +10,7 @@ func (tree *RTree)  _build(items []BoxObj, left, right, height int) *Node {
     if N <= M {
         // reached leaf level return leaf
         node = NewNode(
-            emptyMbr(),
+            emptyObject(),
             1, true,
             makeChildren(items[left: right + 1: right + 1]),
         )
@@ -29,7 +29,7 @@ func (tree *RTree)  _build(items []BoxObj, left, right, height int) *Node {
 
     // TODO eliminate recursion?
 
-    node = NewNode(emptyMbr(), height, false, make([]*Node, 0))
+    node = NewNode(emptyObject(), height, false, make([]*Node, 0))
 
     // split the items into M mostly square tiles
 
@@ -46,7 +46,7 @@ func (tree *RTree)  _build(items []BoxObj, left, right, height int) *Node {
         for j = i; j <= right2; j += N2 {
             right3 = minInt(j + N2 - 1, right2)
             // pack each entry recursively
-            node.addChild(tree._build(items, j, right3, height - 1))
+            node.addChild(tree.buildTree(items, j, right3, height - 1))
         }
     }
 

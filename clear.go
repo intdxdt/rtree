@@ -5,23 +5,44 @@ import (
 	"github.com/intdxdt/mbr"
 )
 
-//universe type with bounds [+inf +inf -inf -inf]
-type universe struct{}
-
-func (u *universe) BBox() mbr.MBR {
-	return emptyMbr()
-}
-
-func emptyMbr() mbr.MBR {
-	return mbr.MBR{
+func emptyMBR() *mbr.MBR {
+	return &mbr.MBR{
 		math.Inf(1), math.Inf(1),
 		math.Inf(-1), math.Inf(-1),
 	}
 }
 
+type Obj struct {
+	Id     int
+	Meta   int
+	MBR    *mbr.MBR
+	Object interface{}
+}
+
+func emptyObject() *Obj {
+	return &Obj{
+		Id:     -1,
+		MBR:    emptyMBR(),
+		Object: nil,
+		Meta:   -1,
+	}
+}
+
+func Object(id int, box *mbr.MBR, object ...interface{}) *Obj {
+	var obj interface{}
+	if len(object) > 0 {
+		obj = object[0]
+	}
+	return &Obj{
+		Id:     id,
+		MBR:    box,
+		Object: obj,
+		Meta:   -1,
+	}
+}
 
 func (tree *RTree) Clear() *RTree {
-	node := NewNode(&universe{}, 1, true, make([]*Node, 0))
+	node := NewNode(emptyObject(), 1, true, make([]*Node, 0))
 	tree.Data = node
 	return tree
 }

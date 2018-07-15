@@ -13,15 +13,14 @@ type RTree struct {
     minEntries int
 }
 
-func NewRTree(nodeCapacity int) *RTree {
-    self  := &RTree{}
-    self.Clear()
-
-    if nodeCapacity <= 0 {
-        nodeCapacity = 9
+func NewRTree(nodeCap ...int) *RTree {
+    var bucketSize = 8
+    var self  = (&RTree{}).Clear()
+    if len(nodeCap) > 0 {
+        bucketSize = nodeCap[0]
     }
-    // max entries in a node is 9 by default min node fill is 40% for best performance
-    self.maxEntries = maxEntries(nodeCapacity)
+    // max entries in a Node is 9 by default min Node fill is 40% for best performance
+    self.maxEntries = maxEntries(bucketSize)
     self.minEntries = minEntries(self.maxEntries)
     return self
 }

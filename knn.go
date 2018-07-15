@@ -2,15 +2,16 @@ package rtree
 
 import (
 	"github.com/intdxdt/heap"
+	"github.com/intdxdt/mbr"
 )
 
 func predicate(_ *KObj) (bool, bool) {
 	return true, false
 }
 
-func (tree *RTree) KNN(
-	query BoxObj, limit int, score func(BoxObj, BoxObj) float64,
-	predicates ...func(*KObj) (bool, bool)) []BoxObj {
+func (tree *RTree) Knn(
+	query *mbr.MBR, limit int, score func(*mbr.MBR, *KObj) float64,
+	predicates ...func(*KObj) (bool, bool)) []*Obj {
 
 	var predFn = predicate
 	if len(predicates) > 0 {
@@ -18,9 +19,9 @@ func (tree *RTree) KNN(
 	}
 
 	var node = tree.Data
-	var result = make([]BoxObj, 0)
+	var result []*Obj
 	var child *Node
-	var queue = heap.NewHeap(kobjCmp, heap.NewHeapType().AsMin())
+	var queue = heap.NewHeap(kObjCmp, heap.NewHeapType().AsMin())
 	var stop, pred bool
 	var dist float64
 
@@ -29,19 +30,20 @@ func (tree *RTree) KNN(
 			child = node.children[i]
 
 			if len(child.children) == 0 {
-				dist = score(query, child.GetItem())
+				dist = score(query, &KObj{child, child.bbox, true, -1})
 			} else {
-				dist = score(query, child.BBox())
+				dist = score(query, &KObj{nil, child.bbox, false, -1})
 			}
 
 			queue.Push(&KObj{
-				node:   child,
-				isItem: len(child.children) == 0,
-				dist:   dist,
+				Node:   child,
+				MBR:    child.bbox,
+				IsItem: len(child.children) == 0,
+				Dist:   dist,
 			})
 		}
 
-		for !queue.IsEmpty() && queue.Peek().(*KObj).isItem {
+		for !queue.IsEmpty() && queue.Peek().(*KObj).IsItem {
 			var candidate = queue.Pop().(*KObj)
 			pred, stop = predFn(candidate)
 			if pred {
@@ -62,7 +64,7 @@ func (tree *RTree) KNN(
 			if q == nil {
 				node = nil
 			} else {
-				node = q.(*KObj).node
+				node = q.(*KObj).Node
 			}
 		}
 	}

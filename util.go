@@ -2,54 +2,59 @@ package rtree
 
 //split at index
 func splitAtIndex(nodes []*Node, index int) ([]*Node, []*Node) {
-	ln := len(nodes)
-	newNodes := make([]*Node, ln - index)
-	copy(newNodes, nodes[index:])
+	var ln = len(nodes)
+	var ext = make([]*Node, 0, ln-index)
 	for i := index; i < ln; i++ {
+		ext = append(ext, nodes[i])
 		nodes[i] = nil
 	}
-	nodes = nodes[:index]
-	return nodes, newNodes
+	return nodes[:index], ext
 }
 
 //slice index
 func sliceIndex(limit int, predicate func(i int) bool) int {
+	var index = -1
 	for i := 0; i < limit; i++ {
 		if predicate(i) {
-			return i
+			index = i
+			break
 		}
 	}
-	return -1
+	return index
 }
 
 //minimum float
 func min(a, b float64) float64 {
+	var m = a
 	if b < a {
-		return b
+		m = b
 	}
-	return a
+	return m
 }
 
 //maximum float
 func max(a, b float64) float64 {
+	var m = a
 	if b > a {
-		return b
+		m = b
 	}
-	return a
+	return m
 }
 
 //min integer
 func minInt(a, b int) int {
+	var m = a
 	if b < a {
-		return b
+		m = b
 	}
-	return a
+	return m
 }
 
 //maximum integer
 func maxInt(a, b int) int {
+	var m = a
 	if b > a {
-		return b
+		m = b
 	}
-	return a
+	return m
 }

@@ -1,5 +1,7 @@
 package rtree
 
+import "github.com/intdxdt/mbr"
+
 func nodeAtIndex(a []*Node, i int) *Node {
 	var n = len(a)
 	if i > n-1 || i < 0 || n == 0 {
@@ -31,7 +33,7 @@ func popIndex(indxs *[]int) int {
 	return v
 }
 
-//remove node at given index from node slice.
+//remove Node at given index from Node slice.
 func removeNode(a []*Node, i int) []*Node {
 	var n = len(a) - 1
 	if i > n {
@@ -41,12 +43,12 @@ func removeNode(a []*Node, i int) []*Node {
 	return a
 }
 
-//condense node and its path from the root
+//condense Node and its path from the root
 func (tree *RTree) condense(path []*Node) {
 	var parent *Node
 	var i = len(path) - 1
 	// go through the path, removing empty nodes and updating bboxes
-	for  i >= 0 {
+	for i >= 0 {
 		if len(path[i].children) == 0 {
 			//go through the path, removing empty nodes and updating bboxes
 			if i > 0 {
@@ -70,11 +72,44 @@ func (tree *RTree) condense(path []*Node) {
 
 //Remove Item from RTree
 //NOTE:if item is a bbox , then first found bbox is removed
-func (tree *RTree) Remove(item BoxObj) *RTree {
+func (tree *RTree) RemoveBoxObj(item *Obj) *RTree {
+	if (item == nil) {
+		return tree
+	}
+	tree.removeItem(item.MBR,
+		func(node *Node, i int) bool {
+			return node.children[i].bbox.Equals(item.MBR)
+		})
+	return tree
+}
+
+//Remove Item from RTree
+//NOTE:if item is a bbox , then first found bbox is removed
+func (tree *RTree) RemoveNode(item *Node) *RTree {
+	if (item == nil || item.bbox == nil) {
+		return tree
+	}
+	tree.removeItem(item.bbox,
+		func(node *Node, i int) bool {
+			return node.children[i] == item
+		})
+	return tree
+}
+
+//Remove Item from RTree
+//NOTE:if item is a bbox , then first found bbox is removed
+func (tree *RTree) RemoveMBR(item *mbr.MBR) *RTree {
+	tree.removeItem(item,
+		func(node *Node, i int) bool {
+			return node.children[i].bbox.Equals(item)
+		})
+	return tree
+}
+
+func (tree *RTree) removeItem(item *mbr.MBR, predicate func(*Node, int) bool) *RTree {
 	if item == nil {
 		return tree
 	}
-	_, isnode := item.(*Node)
 
 	var node = tree.Data
 	var parent *Node
@@ -95,28 +130,24 @@ func (tree *RTree) Remove(item BoxObj) *RTree {
 		}
 
 		if node.leaf {
-			// check current node
-			//index = node.children.indexOf(item)
+			// check current Node
+			//index = Node.children.indexOf(item)
 			index = sliceIndex(len(node.children), func(i int) bool {
-				if isnode {
-					return node.children[i] == item
-				}
-				return node.children[i].bbox.Equals(item.BBox())
+				return predicate(node, i)
 			})
 
 			//if found
 			if index != -1 {
 				//item found, remove the item and condense self upwards
-				//node.children.splice(index, 1)
+				//Node.children.splice(index, 1)
 				node.children = removeNode(node.children, index)
 				path = append(path, node)
 				tree.condense(path)
 				return tree
 			}
-
 		}
 
-		if !goingUp && !node.leaf && contains(&node.bbox, &bbox) {
+		if !goingUp && !node.leaf && contains(node.bbox, bbox) {
 			// go down
 			path = append(path, node)
 			indexes = append(indexes, i)
