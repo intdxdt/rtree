@@ -2,7 +2,7 @@ package rtree
 
 import "github.com/intdxdt/mbr"
 
-func nodeAtIndex(a []*Node, i int) *Node {
+func nodeAtIndex(a []*rNode, i int) *rNode {
 	var n = len(a)
 	if i > n-1 || i < 0 || n == 0 {
 		return nil
@@ -10,8 +10,8 @@ func nodeAtIndex(a []*Node, i int) *Node {
 	return a[i]
 }
 
-func popNode(a []*Node) (*Node, []*Node) {
-	var v *Node
+func popNode(a []*rNode) (*rNode, []*rNode) {
+	var v *rNode
 	var n int
 	if len(a) == 0 {
 		return nil, a
@@ -33,8 +33,8 @@ func popIndex(indxs *[]int) int {
 	return v
 }
 
-//remove Node at given index from Node slice.
-func removeNode(a []*Node, i int) []*Node {
+//remove rNode at given index from rNode slice.
+func removeNode(a []*rNode, i int) []*rNode {
 	var n = len(a) - 1
 	if i > n {
 		return a
@@ -43,9 +43,9 @@ func removeNode(a []*Node, i int) []*Node {
 	return a
 }
 
-//condense Node and its path from the root
-func (tree *RTree) condense(path []*Node) {
-	var parent *Node
+//condense rNode and its path from the root
+func (tree *RTree) condense(path []*rNode) {
+	var parent *rNode
 	var i = len(path) - 1
 	// go through the path, removing empty nodes and updating bboxes
 	for i >= 0 {
@@ -72,26 +72,13 @@ func (tree *RTree) condense(path []*Node) {
 
 //Remove Item from RTree
 //NOTE:if item is a bbox , then first found bbox is removed
-func (tree *RTree) RemoveBoxObj(item *Obj) *RTree {
+func (tree *RTree) RemoveObj(item *Obj) *RTree {
 	if (item == nil) {
 		return tree
 	}
 	tree.removeItem(item.MBR,
-		func(node *Node, i int) bool {
-			return node.children[i].bbox.Equals(item.MBR)
-		})
-	return tree
-}
-
-//Remove Item from RTree
-//NOTE:if item is a bbox , then first found bbox is removed
-func (tree *RTree) RemoveNode(item *Node) *RTree {
-	if (item == nil || item.bbox == nil) {
-		return tree
-	}
-	tree.removeItem(item.bbox,
-		func(node *Node, i int) bool {
-			return node.children[i] == item
+		func(node *rNode, i int) bool {
+			return node.children[i].item == item
 		})
 	return tree
 }
@@ -100,21 +87,21 @@ func (tree *RTree) RemoveNode(item *Node) *RTree {
 //NOTE:if item is a bbox , then first found bbox is removed
 func (tree *RTree) RemoveMBR(item *mbr.MBR) *RTree {
 	tree.removeItem(item,
-		func(node *Node, i int) bool {
+		func(node *rNode, i int) bool {
 			return node.children[i].bbox.Equals(item)
 		})
 	return tree
 }
 
-func (tree *RTree) removeItem(item *mbr.MBR, predicate func(*Node, int) bool) *RTree {
+func (tree *RTree) removeItem(item *mbr.MBR, predicate func(*rNode, int) bool) *RTree {
 	if item == nil {
 		return tree
 	}
 
 	var node = tree.Data
-	var parent *Node
+	var parent *rNode
 	var bbox = item.BBox()
-	var path = make([]*Node, 0)
+	var path = make([]*rNode, 0)
 	var indexes = make([]int, 0)
 	var i, index int
 	var goingUp bool
@@ -130,8 +117,8 @@ func (tree *RTree) removeItem(item *mbr.MBR, predicate func(*Node, int) bool) *R
 		}
 
 		if node.leaf {
-			// check current Node
-			//index = Node.children.indexOf(item)
+			// check current rNode
+			//index = rNode.children.indexOf(item)
 			index = sliceIndex(len(node.children), func(i int) bool {
 				return predicate(node, i)
 			})
@@ -139,7 +126,7 @@ func (tree *RTree) removeItem(item *mbr.MBR, predicate func(*Node, int) bool) *R
 			//if found
 			if index != -1 {
 				//item found, remove the item and condense self upwards
-				//Node.children.splice(index, 1)
+				//rNode.children.splice(index, 1)
 				node.children = removeNode(node.children, index)
 				path = append(path, node)
 				tree.condense(path)

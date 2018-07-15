@@ -8,8 +8,8 @@ func (tree *RTree) Collides(bbox *mbr.MBR) bool {
         return false
     }
 
-    var searchList = make([]*Node, 0)
-    var child *Node
+    var searchList = make([]*rNode, 0)
+    var child *rNode
     var bln  = false
 
     for !bln && node != nil {

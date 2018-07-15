@@ -7,7 +7,7 @@ import (
 
 //KObj instance struct
 type KObj struct {
-	Node   *Node
+	Node   *rNode
 	MBR    *mbr.MBR
 	IsItem bool
 	Dist   float64

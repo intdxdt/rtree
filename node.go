@@ -4,18 +4,18 @@ import (
 	"github.com/intdxdt/mbr"
 )
 
-//Node type for internal Node
-type Node struct {
-	children []*Node
+//rNode type for internal rNode
+type rNode struct {
+	children []*rNode
 	item     *Obj
 	height   int
 	leaf     bool
 	bbox     *mbr.MBR
 }
 
-//NewNode creates a new Node
-func NewNode(item *Obj, height int, leaf bool, children []*Node) *Node {
-	return &Node{
+//newNode creates a new rNode
+func newNode(item *Obj, height int, leaf bool, children []*rNode) *rNode {
+	return &rNode{
 		children: children,
 		item:     item,
 		height:   height,
@@ -24,10 +24,10 @@ func NewNode(item *Obj, height int, leaf bool, children []*Node) *Node {
 	}
 }
 
-//Node type for internal Node
-func newLeafNode(item *Obj) *Node {
-	return &Node{
-		children: []*Node{},
+//rNode type for internal rNode
+func newLeafNode(item *Obj) *rNode {
+	return &rNode{
+		children: []*rNode{},
 		item:     item,
 		height:   1,
 		leaf:     true,
@@ -36,23 +36,25 @@ func newLeafNode(item *Obj) *Node {
 }
 
 //MBR returns bbox property
-func (n *Node) BBox() *mbr.MBR {
+func (n *rNode) BBox() *mbr.MBR {
 	return n.bbox
 }
 
-//add child
-func (n *Node) addChild(child *Node) {
-	n.children = append(n.children, child)
-}
-
-//GetItem from Node
-func (n *Node) GetItem() *Obj {
+//GetItem from rNode
+func (n *rNode) GetItem() *Obj {
 	return n.item
 }
 
-//Constructs children of Node
-func makeChildren(items []*Obj) []*Node {
-	var chs = make([]*Node, len(items))
+//add child
+func (n *rNode) addChild(child *rNode) {
+	n.children = append(n.children, child)
+}
+
+
+
+//Constructs children of rNode
+func makeChildren(items []*Obj) []*rNode {
+	var chs = make([]*rNode, len(items))
 	for i := range items {
 		chs[i] = newLeafNode(items[i])
 	}

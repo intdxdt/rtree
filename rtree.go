@@ -8,7 +8,7 @@ package rtree
 
 //RTree type
 type RTree struct {
-    Data       *Node
+    Data       *rNode
     maxEntries int
     minEntries int
 }
@@ -19,7 +19,7 @@ func NewRTree(nodeCap ...int) *RTree {
     if len(nodeCap) > 0 {
         bucketSize = nodeCap[0]
     }
-    // max entries in a Node is 9 by default min Node fill is 40% for best performance
+    // max entries in a rNode is 9 by default min rNode fill is 40% for best performance
     self.maxEntries = maxEntries(bucketSize)
     self.minEntries = minEntries(self.maxEntries)
     return self

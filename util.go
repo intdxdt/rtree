@@ -1,9 +1,9 @@
 package rtree
 
 //split at index
-func splitAtIndex(nodes []*Node, index int) ([]*Node, []*Node) {
+func splitAtIndex(nodes []*rNode, index int) ([]*rNode, []*rNode) {
 	var ln = len(nodes)
-	var ext = make([]*Node, 0, ln-index)
+	var ext = make([]*rNode, 0, ln-index)
 	for i := index; i < ln; i++ {
 		ext = append(ext, nodes[i])
 		nodes[i] = nil

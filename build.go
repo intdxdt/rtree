@@ -2,14 +2,14 @@ package rtree
 import "math"
 
 //build
-func (tree *RTree) buildTree(items []*Obj, left, right, height int) *Node {
+func (tree *RTree) buildTree(items []*Obj, left, right, height int) *rNode {
 
     var N = float64(right - left + 1)
     var M = float64(tree.maxEntries)
-    var node *Node
+    var node *rNode
     if N <= M {
         // reached leaf level return leaf
-        node = NewNode(
+        node = newNode(
             emptyObject(),
             1, true,
             makeChildren(items[left: right + 1: right + 1]),
@@ -29,7 +29,7 @@ func (tree *RTree) buildTree(items []*Obj, left, right, height int) *Node {
 
     // TODO eliminate recursion?
 
-    node = NewNode(emptyObject(), height, false, make([]*Node, 0))
+    node = newNode(emptyObject(), height, false, make([]*rNode, 0))
 
     // split the items into M mostly square tiles
 

@@ -20,18 +20,18 @@ type nodeParent struct {
 	children []string
 }
 
-func print_RTree(a *Node) []*nodeParent {
+func print_RTree(a *rNode) []*nodeParent {
 	var tokens []*nodeParent
 	if a == nil {
 		return tokens
 	}
-	var node *Node
-	var stack []*Node
+	var node *rNode
+	var stack []*rNode
 	stack = append(stack, a)
 	for len(stack) > 0 {
 		node, stack = popNode(stack)
 		var parent = &nodeParent{wkt: node.bbox.String()}
-		//adopt children on stack and let Node go out of scope
+		//adopt children on stack and let rNode go out of scope
 		for _, n := range node.children {
 			if len(n.children) > 0 {
 				stack = append(stack, n)
@@ -50,17 +50,17 @@ func print_RTree(a *Node) []*nodeParent {
 func TestRtree(t *testing.T) {
 	g := goblin.Goblin(t)
 
-	g.Describe("rtree : Node, leaf, inode", func() {
+	g.Describe("rtree : rNode, leaf, inode", func() {
 		var pt  = &Pnt{0, 0}
 		var  item    = Object(0, pt.BBox(), pt )
 		var  pth     = make(NodePath, 0)
-		var  b       = NewNode(item, 0, true, nil)
+		var  b       = newNode(item, 0, true, nil)
 
 		pth = append(pth, b)
 		pth = append(pth, b)
 		pth = append(pth, b)
 
-		n := NewNode(item, 1, false, pth)
+		n := newNode(item, 1, false, pth)
 
 		items := make([]*Obj, 0, 10)
 		nodes := make(NodePath, 0, 0)
@@ -68,7 +68,7 @@ func TestRtree(t *testing.T) {
 		items = append(items, item)
 		nodes = append(nodes, b)
 
-		g.It("type Node check ", func() {
+		g.It("type rNode check ", func() {
 			g.Assert(b.GetItem().Object.(*Pnt)).Eql(pt)
 
 			g.Assert(b.leaf).Equal(true)
@@ -173,9 +173,9 @@ func TestRtree(t *testing.T) {
 		}
 
 		g.It("same root bounds for : bulkload & single insert ", func() {
-			res := tree.Search(query)
+			var res = tree.Search(query)
 			for i := range res {
-				tree.RemoveNode(res[i])
+				tree.RemoveObj(res[i])
 			}
 			g.Assert(tree.IsEmpty()).IsTrue()
 			g.Assert(len(tree.Data.children)).Equal(0)

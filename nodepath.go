@@ -1,7 +1,7 @@
 package rtree
 
-//NodePath slice of Node
-type NodePath []*Node
+//NodePath slice of rNode
+type NodePath []*rNode
 
 //Len for sort interface
 func (path NodePath) Len() int {
@@ -33,16 +33,3 @@ func (path YNodePath) Less(i, j int) bool {
 	return path.NodePath[i].bbox[1] < path.NodePath[j].bbox[1]
 }
 
-//XYNodePath is type  for  xy sorting of boxes
-type XYNodePath struct {
-	NodePath
-}
-
-//Less sorts boxes lexicographically
-func (path XYNodePath) Less(i, j int) bool {
-	var d = path.NodePath[i].bbox[0] - path.NodePath[j].bbox[0]
-	if feq(d, 0.0) {
-		d = path.NodePath[i].bbox[1] - path.NodePath[j].bbox[1]
-	}
-	return d < 0
-}

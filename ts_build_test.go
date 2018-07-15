@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func print_rtree(n *Node) {
+func print_rtree(n *rNode) {
 	var tokens = print_RTree(n)
 	for _, tok := range tokens {
 		fmt.Println(tok.wkt)

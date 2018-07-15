@@ -20,7 +20,7 @@ func (tree *RTree) Knn(
 
 	var node = tree.Data
 	var result []*Obj
-	var child *Node
+	var child *rNode
 	var queue = heap.NewHeap(kObjCmp, heap.NewHeapType().AsMin())
 	var stop, pred bool
 	var dist float64

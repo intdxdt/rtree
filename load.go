@@ -16,7 +16,7 @@ func (tree *RTree) LoadBoxes(data []*mbr.MBR) *RTree {
 //Load implements bulk loading
 func (tree *RTree) Load(items []*Obj) *RTree {
 	var n  = len(items)
-	var node *Node
+	var node *rNode
 	if n < tree.minEntries {
 		for i := range items {
 			tree.Insert(items[i])

@@ -6,12 +6,12 @@ import (
 )
 
 //calcBBox calculates its bbox from bboxes of its children.
-func calcBBox(node *Node) {
+func calcBBox(node *rNode) {
 	node.bbox = distBBox(node, 0, len(node.children))
 }
 
-//distBBox computes min bounding rectangle of Node children from k to p-1.
-func distBBox(node *Node, k, p int) *mbr.MBR {
+//distBBox computes min bounding rectangle of rNode children from k to p-1.
+func distBBox(node *rNode, k, p int) *mbr.MBR {
 	var bbox = emptyMBR()
 	for i := k; i < p; i++ {
 		extend(bbox, node.children[i].bbox)
@@ -20,14 +20,14 @@ func distBBox(node *Node, k, p int) *mbr.MBR {
 }
 
 //allDistMargin computes total margin of all possible split distributions.
-//Each Node is at least m full.
-func (tree *RTree) allDistMargin(node *Node, m, M int, sortBy SortBy) float64 {
+//Each rNode is at least m full.
+func (tree *RTree) allDistMargin(node *rNode, m, M int, sortBy SortBy) float64 {
 	if sortBy == ByX {
 		sort.Sort(XNodePath{node.children})
-		//bubbleAxis(*Node.getChildren(), ByX, ByY)
+		//bubbleAxis(*rNode.getChildren(), ByX, ByY)
 	} else if sortBy == ByY {
 		sort.Sort(YNodePath{node.children})
-		//bubbleAxis(*Node.getChildren(), ByY, ByX)
+		//bubbleAxis(*rNode.getChildren(), ByY, ByX)
 	}
 
 	var i int

@@ -5,17 +5,17 @@ import (
 )
 
 //Search item
-func (tree *RTree) Search(bbox *mbr.MBR) []*Node {
+func (tree *RTree) Search(bbox *mbr.MBR) []*Obj {
 
-	var result []*Node
+	var result []*rNode
 	var node = tree.Data
 
 	if !intersects(bbox, node.bbox) {
-		return result
+		return []*Obj{}
 	}
 
-	var nodesToSearch []*Node
-	var child *Node
+	var nodesToSearch []*rNode
+	var child *rNode
 	var childBBox *mbr.MBR
 
 	for {
@@ -40,18 +40,22 @@ func (tree *RTree) Search(bbox *mbr.MBR) []*Node {
 		}
 	}
 
-	return result
+	var objs = make([]*Obj, 0, len(result))
+	for i := range result {
+		objs = append(objs, result[i].item)
+	}
+	return objs
 }
 
-//All items from  root Node
-func (tree *RTree) All() []*Node {
-	return all(tree.Data, make([]*Node, 0))
+//All items from  root rNode
+func (tree *RTree) All() []*rNode {
+	return all(tree.Data, make([]*rNode, 0))
 }
 
-//all - fetch all items from Node
-func all(node *Node, result []*Node) []*Node {
-	var nodesToSearch = make([]*Node, 0)
-	for true {
+//all - fetch all items from rNode
+func all(node *rNode, result []*rNode) []*rNode {
+	var nodesToSearch = make([]*rNode, 0)
+	for {
 		if node.leaf {
 			for i := range node.children {
 				result = append(result, node.children[i])

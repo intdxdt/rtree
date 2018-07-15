@@ -5,10 +5,10 @@ import (
 	"sort"
 )
 
-// _split overflowed Node into two
-func (tree *RTree) split(insertPath []*Node, level int) {
+// _split overflowed rNode into two
+func (tree *RTree) split(insertPath []*rNode, level int) {
 	var node = insertPath[level]
-	var newNode = NewNode(emptyObject(), node.height, node.leaf, []*Node{})
+	var newNode = newNode(emptyObject(), node.height, node.leaf, []*rNode{})
 	var M = len(node.children)
 	var m = tree.minEntries
 
@@ -28,14 +28,14 @@ func (tree *RTree) split(insertPath []*Node, level int) {
 }
 
 //_splitRoot splits the root of tree.
-func (tree *RTree) splitRoot(node, newNode *Node) {
-	// split root Node
-	tree.Data = NewNode(emptyObject(), node.height+1, false, []*Node{node, newNode})
+func (tree *RTree) splitRoot(node, other *rNode) {
+	// split root rNode
+	tree.Data = newNode(emptyObject(), node.height+1, false, []*rNode{node, other})
 	calcBBox(tree.Data)
 }
 
 //_chooseSplitIndex selects split index.
-func (tree *RTree) chooseSplitIndex(node *Node, m, M int) int {
+func (tree *RTree) chooseSplitIndex(node *rNode, m, M int) int {
 	var i, index int
 	var overlap, area, minOverlap, minArea float64
 
@@ -69,9 +69,9 @@ func (tree *RTree) chooseSplitIndex(node *Node, m, M int) int {
 	return index
 }
 
-//_chooseSplitAxis selects split axis : sorts Node children
+//_chooseSplitAxis selects split axis : sorts rNode children
 //by the best axis for split.
-func (tree *RTree) chooseSplitAxis(node *Node, m, M int) {
+func (tree *RTree) chooseSplitAxis(node *rNode, m, M int) {
 	var xMargin = tree.allDistMargin(node, m, M, ByX)
 	var yMargin = tree.allDistMargin(node, m, M, ByY)
 
