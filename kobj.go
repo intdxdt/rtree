@@ -7,19 +7,19 @@ import (
 
 //KObj instance struct
 type KObj struct {
-	Node   *rNode
+	node   *rNode
 	MBR    *mbr.MBR
 	IsItem bool
 	Dist   float64
 }
 
 func (kobj *KObj) GetItem() *Obj {
-	return kobj.Node.GetItem()
+	return kobj.node.item
 }
 
 //String representation of knn object
 func (kobj *KObj) String() string {
-	return fmt.Sprintf("%v -> %v", kobj.Node.bbox.String(), kobj.Dist)
+	return fmt.Sprintf("%v -> %v", kobj.node.bbox.String(), kobj.Dist)
 }
 
 //Compare - cmp interface

@@ -36,7 +36,7 @@ func (tree *RTree) Knn(
 			}
 
 			queue.Push(&KObj{
-				Node:   child,
+				node:   child,
 				MBR:    child.bbox,
 				IsItem: len(child.children) == 0,
 				Dist:   dist,
@@ -64,7 +64,7 @@ func (tree *RTree) Knn(
 			if q == nil {
 				node = nil
 			} else {
-				node = q.(*KObj).Node
+				node = q.(*KObj).node
 			}
 		}
 	}
