@@ -23,24 +23,18 @@ func (tree *RTree) Knn(
 	var child *rNode
 	var queue = heap.NewHeap(kObjCmp, heap.NewHeapType().AsMin())
 	var stop, pred bool
-	var dist float64
 
 	for !stop && (node != nil) {
 		for i := 0; i < len(node.children); i++ {
 			child = node.children[i]
-
-			if len(child.children) == 0 {
-				dist = score(query, &KObj{child, child.bbox, true, -1})
-			} else {
-				dist = score(query, &KObj{nil, child.bbox, false, -1})
+			var o = &KObj{
+				child,
+				child.bbox,
+				len(child.children) == 0,
+				-1,
 			}
-
-			queue.Push(&KObj{
-				node:   child,
-				MBR:    child.bbox,
-				IsItem: len(child.children) == 0,
-				Dist:   dist,
-			})
+			o.Dist = score(query, o)
+			queue.Push(o)
 		}
 
 		for !queue.IsEmpty() && queue.Peek().(*KObj).IsItem {
@@ -60,7 +54,7 @@ func (tree *RTree) Knn(
 		}
 
 		if !stop {
-			q := queue.Pop()
+			var q = queue.Pop()
 			if q == nil {
 				node = nil
 			} else {
