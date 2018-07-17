@@ -21,11 +21,11 @@ func (tree *RTree) Knn(
 	var node = tree.Data
 	var result []*Obj
 	var child *rNode
-	var queue = heap.NewHeap(kObjCmp, heap.NewHeapType().AsMin())
 	var stop, pred bool
+	var queue = heap.NewHeap(kObjCmp, heap.NewHeapType().AsMin())
 
 	for !stop && (node != nil) {
-		for i := 0; i < len(node.children); i++ {
+		for i := range node.children {
 			child = node.children[i]
 			var o = &KObj{
 				child,
