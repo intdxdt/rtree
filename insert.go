@@ -15,17 +15,17 @@ func (tree *RTree) Insert(item *Obj) *RTree {
 
 //insert - private
 func (tree *RTree) insert(item *Obj, level int) {
-	var node *rNode
-	var insertPath = make([]*rNode, 0, tree.maxEntries)
+	var nd *node
+	var insertPath = make([]*node, 0, tree.maxEntries)
 
-	// find the best rNode for accommodating the item, saving all nodes along the path too
-	node, insertPath = chooseSubtree(item.MBR, tree.Data, level, insertPath)
+	// find the best node for accommodating the item, saving all nodes along the path too
+	nd, insertPath = chooseSubtree(item.MBR, tree.Data, level, insertPath)
 
-	// put the item into the rNode item_bbox
-	node.addChild(newLeafNode(item))
-	extend(node.bbox, item.MBR)
+	// put the item into the node item_bbox
+	nd.addChild(newLeafNode(item))
+	extend(nd.bbox, item.MBR)
 
-	// split on rNode overflow propagate upwards if necessary
+	// split on node overflow propagate upwards if necessary
 	level, insertPath = tree.splitOnOverflow(level, insertPath)
 
 	// adjust bboxes along the insertion path
@@ -33,25 +33,25 @@ func (tree *RTree) insert(item *Obj, level int) {
 }
 
 //insert - private
-func (tree *RTree) insertNode(item *rNode, level int) {
-	var node *rNode
-	var insertPath []*rNode
+func (tree *RTree) insertNode(item *node, level int) {
+	var nd *node
+	var insertPath []*node
 
-	// find the best rNode for accommodating the item, saving all nodes along the path too
-	node, insertPath = chooseSubtree(item.bbox, tree.Data, level, insertPath)
+	// find the best node for accommodating the item, saving all nodes along the path too
+	nd, insertPath = chooseSubtree(item.bbox, tree.Data, level, insertPath)
 
-	node.children = append(node.children, item)
-	extend(node.bbox, item.bbox)
+	nd.children = append(nd.children, item)
+	extend(nd.bbox, item.bbox)
 
-	// split on rNode overflow propagate upwards if necessary
+	// split on node overflow propagate upwards if necessary
 	level, insertPath = tree.splitOnOverflow(level, insertPath)
 
 	// adjust bboxes along the insertion path
 	tree.adjustParentBBoxes(item.bbox, insertPath, level)
 }
 
-// split on rNode overflow propagate upwards if necessary
-func (tree *RTree) splitOnOverflow(level int, insertPath []*rNode) (int, []*rNode) {
+// split on node overflow propagate upwards if necessary
+func (tree *RTree) splitOnOverflow(level int, insertPath []*node) (int, []*node) {
 	for (level >= 0) && (len(insertPath[level].children)  > tree.maxEntries) {
 		tree.split(insertPath, level)
 		level--
@@ -59,21 +59,21 @@ func (tree *RTree) splitOnOverflow(level int, insertPath []*rNode) (int, []*rNod
 	return level, insertPath
 }
 
-//_chooseSubtree select child of rNode and updates path to selected rNode.
-func chooseSubtree(bbox *mbr.MBR, node *rNode, level int, path []*rNode) (*rNode, []*rNode) {
-	var child *rNode
-	var targetNode *rNode
+//_chooseSubtree select child of node and updates path to selected node.
+func chooseSubtree(bbox *mbr.MBR, nd *node, level int, path []*node) (*node, []*node) {
+	var child *node
+	var targetNode *node
 	var minArea, minEnlargement, area, enlargement float64
 
 	for {
-		path = append(path, node)
-		if node.leaf || (len(path)-1 == level) {
+		path = append(path, nd)
+		if nd.leaf || (len(path)-1 == level) {
 			break
 		}
 		minArea, minEnlargement = inf, inf
 
-		for i, length := 0, len(node.children); i < length; i++ {
-			child = node.children[i]
+		for i, length := 0, len(nd.children); i < length; i++ {
+			child = nd.children[i]
 			area = bboxArea(child.bbox)
 			enlargement = enlargedArea(bbox, child.bbox) - area
 
@@ -93,10 +93,10 @@ func chooseSubtree(bbox *mbr.MBR, node *rNode, level int, path []*rNode) (*rNode
 			}
 		}
 
-		node = targetNode
+		nd = targetNode
 	}
 
-	return node, path
+	return nd, path
 }
 
 //extend bounding box

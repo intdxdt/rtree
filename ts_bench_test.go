@@ -8,18 +8,18 @@ import (
 	"github.com/intdxdt/mbr"
 )
 
-func RandBox(size float64, rnd *rand.Rand) *mbr.MBR {
+func RandBox(size float64, rnd *rand.Rand) mbr.MBR {
 	var x = rnd.Float64() * (100.0 - size)
 	var y = rnd.Float64() * (100.0 - size)
-	return &mbr.MBR{
+	return mbr.MBR{
 		x, y,
 		x + size*rnd.Float64(),
 		y + size*rnd.Float64(),
 	}
 }
 
-func GenDataItems(N int, size float64) []*mbr.MBR {
-	var data = make([]*mbr.MBR, N, N)
+func GenDataItems(N int, size float64) []mbr.MBR {
+	var data = make([]mbr.MBR, N, N)
 	var seed = rand.NewSource(time.Now().UnixNano())
 	var rnd = rand.New(seed)
 	for i := 0; i < N; i++ {
@@ -41,7 +41,7 @@ var foundTotal int
 func Benchmark_Insert_OneByOne_SmallBigData(b *testing.B) {
 	var tree = NewRTree(maxFill)
 	for i := 0; i < len(BenchData); i++ {
-		tree.Insert(Object(i, BenchData[i]))
+		tree.Insert(Object(i, &BenchData[i]))
 	}
 	box = tree.Data.BBox()
 }
@@ -90,7 +90,7 @@ func BenchmarkRTree_Search_1000_01pct(b *testing.B) {
 func BenchmarkRTree_Build_And_Remove1000(b *testing.B) {
 	var tree = NewRTree(maxFill).LoadBoxes(BenchData)
 	for i := 0; i < 1000; i++ {
-		tree = tree.RemoveMBR(BenchData[i])
+		tree = tree.RemoveMBR(&BenchData[i])
 	}
 	box = tree.Data.BBox()
 }

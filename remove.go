@@ -2,7 +2,7 @@ package rtree
 
 import "github.com/intdxdt/mbr"
 
-func nodeAtIndex(a []*rNode, i int) *rNode {
+func nodeAtIndex(a []*node, i int) *node {
 	var n = len(a)
 	if i > n-1 || i < 0 || n == 0 {
 		return nil
@@ -10,8 +10,8 @@ func nodeAtIndex(a []*rNode, i int) *rNode {
 	return a[i]
 }
 
-func popNode(a []*rNode) (*rNode, []*rNode) {
-	var v *rNode
+func popNode(a []*node) (*node, []*node) {
+	var v *node
 	var n int
 	if len(a) == 0 {
 		return nil, a
@@ -33,8 +33,8 @@ func popIndex(indxs *[]int) int {
 	return v
 }
 
-//remove rNode at given index from rNode slice.
-func removeNode(a []*rNode, i int) []*rNode {
+//remove node at given index from node slice.
+func removeNode(a []*node, i int) []*node {
 	var n = len(a) - 1
 	if i > n {
 		return a
@@ -43,9 +43,9 @@ func removeNode(a []*rNode, i int) []*rNode {
 	return a
 }
 
-//condense rNode and its path from the root
-func (tree *RTree) condense(path []*rNode) {
-	var parent *rNode
+//condense node and its path from the root
+func (tree *RTree) condense(path []*node) {
+	var parent *node
 	var i = len(path) - 1
 	// go through the path, removing empty nodes and updating bboxes
 	for i >= 0 {
@@ -77,8 +77,8 @@ func (tree *RTree) RemoveObj(item *Obj) *RTree {
 		return tree
 	}
 	tree.removeItem(item.MBR,
-		func(node *rNode, i int) bool {
-			return node.children[i].item == item
+		func(nd *node, i int) bool {
+			return nd.children[i].item == item
 		})
 	return tree
 }
@@ -87,67 +87,63 @@ func (tree *RTree) RemoveObj(item *Obj) *RTree {
 //NOTE:if item is a bbox , then first found bbox is removed
 func (tree *RTree) RemoveMBR(item *mbr.MBR) *RTree {
 	tree.removeItem(item,
-		func(node *rNode, i int) bool {
-			return node.children[i].bbox.Equals(item)
+		func(nd *node, i int) bool {
+			return nd.children[i].bbox.Equals(item)
 		})
 	return tree
 }
 
-func (tree *RTree) removeItem(item *mbr.MBR, predicate func(*rNode, int) bool) *RTree {
-	if item == nil {
-		return tree
-	}
-
-	var node = tree.Data
-	var parent *rNode
+func (tree *RTree) removeItem(item *mbr.MBR, predicate func(*node, int) bool) *RTree {
+	var nd = tree.Data
+	var parent *node
 	var bbox = item.BBox()
-	var path = make([]*rNode, 0)
+	var path = make([]*node, 0)
 	var indexes = make([]int, 0)
 	var i, index int
 	var goingUp bool
 
 	// depth-first iterative self traversal
-	for (node != nil) || (len(path) > 0) {
-		if node == nil {
+	for (nd != nil) || (len(path) > 0) {
+		if nd == nil {
 			// go up
-			node, path = popNode(path)
+			nd, path = popNode(path)
 			parent = nodeAtIndex(path, len(path)-1)
 			i = popIndex(&indexes)
 			goingUp = true
 		}
 
-		if node.leaf {
-			// check current rNode
-			//index = rNode.children.indexOf(item)
-			index = sliceIndex(len(node.children), func(i int) bool {
-				return predicate(node, i)
+		if nd.leaf {
+			// check current node
+			//index = node.children.indexOf(item)
+			index = sliceIndex(len(nd.children), func(i int) bool {
+				return predicate(nd, i)
 			})
 
 			//if found
 			if index != -1 {
 				//item found, remove the item and condense self upwards
-				//rNode.children.splice(index, 1)
-				node.children = removeNode(node.children, index)
-				path = append(path, node)
+				//node.children.splice(index, 1)
+				nd.children = removeNode(nd.children, index)
+				path = append(path, nd)
 				tree.condense(path)
 				return tree
 			}
 		}
 
-		if !goingUp && !node.leaf && contains(node.bbox, bbox) {
+		if !goingUp && !nd.leaf && contains(nd.bbox, bbox) {
 			// go down
-			path = append(path, node)
+			path = append(path, nd)
 			indexes = append(indexes, i)
 			i = 0
-			parent = node
-			node = node.children[0]
+			parent = nd
+			nd = nd.children[0]
 		} else if parent != nil {
 			// go right
 			i++
-			node = nodeAtIndex(parent.children, i)
+			nd = nodeAtIndex(parent.children, i)
 			goingUp = false
 		} else {
-			node = nil
+			nd = nil
 		} // nothing found
 	}
 	return tree

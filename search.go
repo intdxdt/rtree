@@ -5,26 +5,26 @@ import (
 )
 
 //Search item
-func (tree *RTree) Search(bbox *mbr.MBR) []*Obj {
+func (tree *RTree) Search(query mbr.MBR) []*Obj {
+	var bbox = &query
+	var result []*node
+	var nd = tree.Data
 
-	var result []*rNode
-	var node = tree.Data
-
-	if !intersects(bbox, node.bbox) {
+	if !intersects(bbox, nd.bbox) {
 		return []*Obj{}
 	}
 
-	var nodesToSearch []*rNode
-	var child *rNode
+	var nodesToSearch []*node
+	var child *node
 	var childBBox *mbr.MBR
 
 	for {
-		for i, length := 0, len(node.children); i < length; i++ {
-			child = node.children[i]
+		for i, length := 0, len(nd.children); i < length; i++ {
+			child = nd.children[i]
 			childBBox = child.bbox
 
 			if intersects(bbox, childBBox) {
-				if node.leaf {
+				if nd.leaf {
 					result = append(result, child)
 				} else if contains(bbox, childBBox) {
 					result = all(child, result)
@@ -34,8 +34,8 @@ func (tree *RTree) Search(bbox *mbr.MBR) []*Obj {
 			}
 		}
 
-		node, nodesToSearch = popNode(nodesToSearch)
-		if node == nil {
+		nd, nodesToSearch = popNode(nodesToSearch)
+		if nd == nil {
 			break
 		}
 	}
@@ -47,27 +47,27 @@ func (tree *RTree) Search(bbox *mbr.MBR) []*Obj {
 	return objs
 }
 
-//All items from  root rNode
-func (tree *RTree) All() []*rNode {
-	return all(tree.Data, make([]*rNode, 0))
+//All items from  root node
+func (tree *RTree) All() []*node {
+	return all(tree.Data, make([]*node, 0))
 }
 
-//all - fetch all items from rNode
-func all(node *rNode, result []*rNode) []*rNode {
-	var nodesToSearch = make([]*rNode, 0)
+//all - fetch all items from node
+func all(nd *node, result []*node) []*node {
+	var nodesToSearch = make([]*node, 0)
 	for {
-		if node.leaf {
-			for i := range node.children {
-				result = append(result, node.children[i])
+		if nd.leaf {
+			for i := range nd.children {
+				result = append(result, nd.children[i])
 			}
 		} else {
-			for i := range node.children {
-				nodesToSearch = append(nodesToSearch, node.children[i])
+			for i := range nd.children {
+				nodesToSearch = append(nodesToSearch, nd.children[i])
 			}
 		}
 
-		node, nodesToSearch = popNode(nodesToSearch)
-		if node == nil {
+		nd, nodesToSearch = popNode(nodesToSearch)
+		if nd == nil {
 			break
 		}
 	}

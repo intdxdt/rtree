@@ -2,20 +2,19 @@ package rtree
 import "math"
 
 //build
-func (tree *RTree) buildTree(items []*Obj, left, right, height int) *rNode {
-
+func (tree *RTree) buildTree(items []*Obj, left, right, height int) *node {
     var N = float64(right - left + 1)
     var M = float64(tree.maxEntries)
-    var node *rNode
+    var n *node
     if N <= M {
         // reached leaf level return leaf
-        node = newNode(
+        n = newNode(
             emptyObject(),
             1, true,
             makeChildren(items[left: right + 1: right + 1]),
         )
-        calcBBox(node)
-        return node
+        calcBBox(n)
+        return n
     }
 
     if height == 0 {
@@ -29,7 +28,7 @@ func (tree *RTree) buildTree(items []*Obj, left, right, height int) *rNode {
 
     // TODO eliminate recursion?
 
-    node = newNode(emptyObject(), height, false, make([]*rNode, 0))
+    n = newNode(emptyObject(), height, false, make([]*node, 0))
 
     // split the items into M mostly square tiles
 
@@ -46,10 +45,10 @@ func (tree *RTree) buildTree(items []*Obj, left, right, height int) *rNode {
         for j = i; j <= right2; j += N2 {
             right3 = minInt(j + N2 - 1, right2)
             // pack each entry recursively
-            node.addChild(tree.buildTree(items, j, right3, height - 1))
+            n.addChild(tree.buildTree(items, j, right3, height - 1))
         }
     }
 
-    calcBBox(node)
-    return node
+    calcBBox(n)
+    return n
 }

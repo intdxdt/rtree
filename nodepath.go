@@ -1,7 +1,7 @@
 package rtree
 
-//NodePath slice of rNode
-type NodePath []*rNode
+//NodePath slice of node
+type NodePath []*node
 
 //Len for sort interface
 func (path NodePath) Len() int {

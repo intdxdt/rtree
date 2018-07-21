@@ -1,10 +1,10 @@
 package rtree
 
 import (
+	"time"
 	"testing"
 	"github.com/intdxdt/mbr"
 	"github.com/franela/goblin"
-	"time"
 )
 
 var knnData []*Obj
@@ -15,7 +15,7 @@ func scoreFn(query *mbr.MBR, boxer  *KObj) float64 {
 
 func initKnn() {
 
-	var dat = []*mbr.MBR{
+	var dat = []mbr.MBR{
 		{87, 55, 87, 56}, {38, 13, 39, 16}, {7, 47, 8, 47}, {89, 9, 91, 12}, {4, 58, 5, 60}, {0, 11, 1, 12}, {0, 5, 0, 6}, {69, 78, 73, 78},
 		{56, 77, 57, 81}, {23, 7, 24, 9}, {68, 24, 70, 26}, {31, 47, 33, 50}, {11, 13, 14, 15}, {1, 80, 1, 80}, {72, 90, 72, 91}, {59, 79, 61, 83},
 		{98, 77, 101, 77}, {11, 55, 14, 56}, {98, 4, 100, 6}, {21, 54, 23, 58}, {44, 74, 48, 74}, {70, 57, 70, 61}, {32, 9, 33, 12}, {43, 87, 44, 91},
@@ -31,8 +31,8 @@ func initKnn() {
 		{99, 3, 103, 5}, {41, 92, 44, 96}, {79, 40, 79, 41}, {29, 2, 29, 4},
 	}
 	knnData = make([]*Obj, 0, len(dat))
-	for i, d := range dat {
-		knnData = append(knnData, Object(i, d))
+	for i := range dat {
+		knnData = append(knnData, Object(i, &dat[i]))
 	}
 }
 
@@ -54,7 +54,7 @@ func TestRtreeKNN(t *testing.T) {
 		g.It("finds n neighbours", func() {
 			var rt = NewRTree(9)
 			rt.Load(knnData)
-			var  nn = rt.Knn(mbr.New(40, 40, 40, 40), 10, scoreFn)
+			var  nn = rt.Knn(mbr.CreateMBR(40, 40, 40, 40), 10, scoreFn)
 			var result = []*mbr.MBR{
 				{38, 39, 39, 39}, {35, 39, 38, 40}, {34, 43, 36, 44},
 				{29, 42, 33, 42}, {48, 38, 48, 40}, {31, 47, 33, 50},
@@ -65,7 +65,7 @@ func TestRtreeKNN(t *testing.T) {
 				g.Assert(foundIn(n.MBR, result)).IsTrue()
 			}
 
-			nn = rt.Knn(mbr.New(40, 40, 40, 40), 1000, scoreFn)
+			nn = rt.Knn(mbr.CreateMBR(40, 40, 40, 40), 1000, scoreFn)
 			g.Assert(len(nn)).Equal(len(knnData))
 		})
 	})
@@ -97,7 +97,7 @@ func TestRtreeKNNPredScore(t *testing.T) {
 			rt := NewRTree(9)
 			rt.Load(knnData)
 			prefFn := createPredicate(6)
-			query := mbr.New(
+			query := mbr.CreateMBR(
 				74.88825108886668, 82.678427498132,
 				74.88825108886668, 82.678427498132,
 			)
@@ -119,13 +119,13 @@ type RichData struct {
 
 func fnRichData() []*Obj {
 	var richData = make([]*Obj, 0)
-	var data = []*mbr.MBR{
+	var data = []mbr.MBR{
 		{1, 2, 1, 2}, {3, 3, 3, 3}, {5, 5, 5, 5},
 		{4, 2, 4, 2}, {2, 4, 2, 4}, {5, 3, 5, 3},
 		{3, 4, 3, 4}, {2.5, 4, 2.5, 4},
 	}
-	for i, d := range data {
-		richData = append(richData, Object(i, d, &RichData{d, i + 1}))
+	for i := range data {
+		richData = append(richData, Object(i, &data[i], &RichData{&data[i], i + 1}))
 	}
 	return richData
 }
@@ -134,9 +134,9 @@ func TestQobj_String(t *testing.T) {
 	g := goblin.Goblin(t)
 	g.Describe("", func() {
 		g.It("test qobject", func() {
-			var box = &mbr.MBR{3, 3, 3, 3}
-			var obj = Object(0, box)
-			var qo = &KObj{newLeafNode(obj), box, true, 3.4}
+			var box = mbr.MBR{3, 3, 3, 3}
+			var obj = Object(0, &box)
+			var qo = &KObj{newLeafNode(obj), &box, true, 3.4}
 			g.Assert(box.String() + " -> 3.4").Equal(qo.String())
 		})
 	})
@@ -156,7 +156,7 @@ func TestRtreeKNNPredicate(t *testing.T) {
 			var predicate = func(v *KObj) (bool, bool) {
 				return v.GetItem().Object.(*RichData).version < 5, false
 			}
-			var result = rt.Knn(mbr.New(2, 4, 2, 4), 1, scoreFn, predicate)
+			var result = rt.Knn(mbr.CreateMBR(2, 4, 2, 4), 1, scoreFn, predicate)
 
 			g.Assert(len(result)).Equal(1)
 

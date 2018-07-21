@@ -2,25 +2,26 @@ package rtree
 
 import "github.com/intdxdt/mbr"
 
-func (tree *RTree) Collides(bbox *mbr.MBR) bool {
-    var node = tree.Data
-    if !intersects(bbox, node.bbox) {
+func (tree *RTree) Collides(query mbr.MBR) bool {
+    var bbox = &query
+    var nd = tree.Data
+    if !intersects(bbox, nd.bbox) {
         return false
     }
 
-    var searchList = make([]*rNode, 0)
-    var child *rNode
+    var searchList = make([]*node, 0)
+    var child *node
     var bln  = false
 
-    for !bln && node != nil {
-        for i, length := 0, len(node.children); !bln && i < length; i++ {
-            child = node.children[i]
+    for !bln && nd != nil {
+        for i, length := 0, len(nd.children); !bln && i < length; i++ {
+            child = nd.children[i]
             if intersects(bbox, child.bbox) {
-                bln =  node.leaf || contains(bbox, child.bbox)
+                bln =  nd.leaf || contains(bbox, child.bbox)
                 searchList = append(searchList, child)
             }
         }
-        node, searchList = popNode(searchList)
+        nd, searchList = popNode(searchList)
     }
 
     return bln

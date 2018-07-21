@@ -10,7 +10,7 @@ func predicate(_ *KObj) (bool, bool) {
 }
 
 func (tree *RTree) Knn(
-	query *mbr.MBR, limit int, score func(*mbr.MBR, *KObj) float64,
+	query mbr.MBR, limit int, score func(*mbr.MBR, *KObj) float64,
 	predicates ...func(*KObj) (bool, bool)) []*Obj {
 
 	var predFn = predicate
@@ -18,22 +18,19 @@ func (tree *RTree) Knn(
 		predFn = predicates[0]
 	}
 
-	var node = tree.Data
+	var nd = tree.Data
 	var result []*Obj
-	var child *rNode
+	var child *node
 	var stop, pred bool
 	var queue = heap.NewHeap(kObjCmp, heap.NewHeapType().AsMin())
 
-	for !stop && (node != nil) {
-		for i := range node.children {
-			child = node.children[i]
+	for !stop && (nd != nil) {
+		for i := range nd.children {
+			child = nd.children[i]
 			var o = &KObj{
-				child,
-				child.bbox,
-				len(child.children) == 0,
-				-1,
+				child, child.bbox, len(child.children) == 0, -1,
 			}
-			o.Dist = score(query, o)
+			o.Dist = score(&query, o)
 			queue.Push(o)
 		}
 
@@ -56,9 +53,9 @@ func (tree *RTree) Knn(
 		if !stop {
 			var q = queue.Pop()
 			if q == nil {
-				node = nil
+				nd = nil
 			} else {
-				node = q.(*KObj).node
+				nd = q.(*KObj).node
 			}
 		}
 	}
