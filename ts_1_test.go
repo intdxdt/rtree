@@ -62,8 +62,8 @@ func TestRtree(t *testing.T) {
 
 		n := newNode(item, 1, false, pth)
 
-		items := make([]*Obj, 0, 10)
-		nodes := make(NodePath, 0, 0)
+		var items = make([]*Obj, 0, 10)
+		var nodes = make(NodePath, 0, 0)
 
 		items = append(items, item)
 		nodes = append(nodes, b)
@@ -224,12 +224,12 @@ func TestRtree(t *testing.T) {
 		bulkTree.Load(bulkItems)
 
 		g.It("should return items found - one-by-one", func() {
-			res1 := tree.Search(query1)
-			res2 := tree.Search(query2)
-			res3 := tree.Search(query3)
-			res4 := tree.Search(query4)
-			res5 := tree.Search(query5)
-			res6 := tree.Search(query6)
+			var res1 = tree.Search(query1)
+			var res2 = tree.Search(query2)
+			var res3 = tree.Search(query3)
+			var res4 = tree.Search(query4)
+			var res5 = tree.Search(query5)
+			var res6 = tree.Search(query6)
 
 			g.Assert(len(res1)).Equal(0)
 			g.Assert(len(res2)).Equal(0)
@@ -241,12 +241,12 @@ func TestRtree(t *testing.T) {
 		})
 
 		g.It("should return items found - bulk loaded tree", func() {
-			res1 := bulkTree.Search(query1)
-			res2 := bulkTree.Search(query2)
-			res3 := bulkTree.Search(query3)
-			res4 := bulkTree.Search(query4)
-			res5 := bulkTree.Search(query5)
-			res6 := bulkTree.Search(query6)
+			var res1 = bulkTree.Search(query1)
+			var res2 = bulkTree.Search(query2)
+			var res3 = bulkTree.Search(query3)
+			var res4 = bulkTree.Search(query4)
+			var res5 = bulkTree.Search(query5)
+			var res6 = bulkTree.Search(query6)
 
 			g.Assert(len(res1)).Equal(0)
 			g.Assert(len(res2)).Equal(0)
