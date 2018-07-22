@@ -42,7 +42,10 @@ func Object(id int, box *mbr.MBR, object ...interface{}) *Obj {
 }
 
 func (tree *RTree) Clear() *RTree {
-	tree.Data = newNode(emptyObject(), 1, true, make([]*node, 0))
+	tree.Data = newNode(
+		emptyObject(),
+		1, true, []node{},
+	)
 	return tree
 }
 

@@ -32,10 +32,10 @@ func printRtree(a *node) []*nodeParent {
 		nd, stack = popNode(stack)
 		var parent = &nodeParent{wkt: nd.bbox.String()}
 		//adopt children on stack and let node go out of scope
-		for _, n := range nd.children {
-			if len(n.children) > 0 {
-				stack = append(stack, n)
-				parent.children = append(parent.children, n.bbox.String())
+		for i := range nd.children {
+			if len(nd.children[i].children) > 0 {
+				stack = append(stack, &nd.children[i])
+				parent.children = append(parent.children, nd.children[i].bbox.String())
 			}
 		}
 

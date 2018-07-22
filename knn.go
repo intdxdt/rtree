@@ -18,7 +18,7 @@ func (tree *RTree) Knn(
 		predFn = predicates[0]
 	}
 
-	var nd = tree.Data
+	var nd = &tree.Data
 	var result []*Obj
 	var child *node
 	var stop, pred bool
@@ -26,9 +26,10 @@ func (tree *RTree) Knn(
 
 	for !stop && (nd != nil) {
 		for i := range nd.children {
-			child = nd.children[i]
+			child = &nd.children[i]
 			var o = &KObj{
-				child, child.bbox, len(child.children) == 0, -1,
+				child, child.bbox,
+				len(child.children) == 0, -1,
 			}
 			o.Dist = score(&query, o)
 			queue.Push(o)

@@ -10,6 +10,14 @@ func nodeAtIndex(a []*node, i int) *node {
 	return a[i]
 }
 
+func nodeSiblingAtIndex(a []node, i int) *node {
+	var n = len(a)
+	if i > n-1 || i < 0 || n == 0 {
+		return nil
+	}
+	return &a[i]
+}
+
 func popNode(a []*node) (*node, []*node) {
 	var v *node
 	var n int
@@ -34,12 +42,12 @@ func popIndex(indxs *[]int) int {
 }
 
 //remove node at given index from node slice.
-func removeNode(a []*node, i int) []*node {
+func removeNode(a []node, i int) []node {
 	var n = len(a) - 1
 	if i > n {
 		return a
 	}
-	a, a[n] = append(a[:i], a[i+1:]...), nil
+	a, a[n] = append(a[:i], a[i+1:]...), node{}
 	return a
 }
 
@@ -54,7 +62,7 @@ func (tree *RTree) condense(path []*node) {
 			if i > 0 {
 				parent = path[i-1]
 				index := sliceIndex(len(parent.children), func(s int) bool {
-					return path[i] == parent.children[s]
+					return path[i] == &parent.children[s]
 				})
 				if index != -1 {
 					parent.children = removeNode(parent.children, index)
@@ -94,7 +102,7 @@ func (tree *RTree) RemoveMBR(item *mbr.MBR) *RTree {
 }
 
 func (tree *RTree) removeItem(item *mbr.MBR, predicate func(*node, int) bool) *RTree {
-	var nd = tree.Data
+	var nd = &tree.Data
 	var parent *node
 	var bbox = item.BBox()
 	var path = make([]*node, 0)
@@ -136,11 +144,11 @@ func (tree *RTree) removeItem(item *mbr.MBR, predicate func(*node, int) bool) *R
 			indexes = append(indexes, i)
 			i = 0
 			parent = nd
-			nd = nd.children[0]
+			nd = &nd.children[0]
 		} else if parent != nil {
 			// go right
 			i++
-			nd = nodeAtIndex(parent.children, i)
+			nd = nodeSiblingAtIndex(parent.children, i)
 			goingUp = false
 		} else {
 			nd = nil

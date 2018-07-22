@@ -9,7 +9,7 @@ package rtree
 
 //RTree type
 type RTree struct {
-	Data       *node
+	Data       node
 	maxEntries int
 	minEntries int
 }

@@ -8,7 +8,7 @@ import (
 // _split overflowed node into two
 func (tree *RTree) split(insertPath []*node, level int) {
 	var nd = insertPath[level]
-	var newNode = newNode(emptyObject(), nd.height, nd.leaf, []*node{})
+	var newNode = newNode(emptyObject(), nd.height, nd.leaf, []node{})
 	var M = len(nd.children)
 	var m = tree.minEntries
 
@@ -18,20 +18,23 @@ func (tree *RTree) split(insertPath []*node, level int) {
 	nd.children, newNode.children = splitAtIndex(nd.children, at)
 
 	calcBBox(nd)
-	calcBBox(newNode)
+	calcBBox(&newNode)
 
 	if level > 0 {
 		insertPath[level-1].addChild(newNode)
 	} else {
-		tree.splitRoot(nd, newNode)
+		tree.splitRoot(*nd, newNode)
 	}
 }
 
 //_splitRoot splits the root of tree.
-func (tree *RTree) splitRoot(nd, other *node) {
+func (tree *RTree) splitRoot(nd, other node) {
 	// split root node
-	tree.Data = newNode(emptyObject(), nd.height+1, false, []*node{nd, other})
-	calcBBox(tree.Data)
+	tree.Data = newNode(
+		emptyObject(),
+		nd.height+1, false, []node{nd, other},
+	)
+	calcBBox(&tree.Data)
 }
 
 //_chooseSplitIndex selects split index.

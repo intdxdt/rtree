@@ -16,7 +16,6 @@ func (tree *RTree) LoadBoxes(data []mbr.MBR) *RTree {
 //Load implements bulk loading
 func (tree *RTree) Load(items []*Obj) *RTree {
 	var n  = len(items)
-	var nd *node
 	if n < tree.minEntries {
 		for i := range items {
 			tree.Insert(items[i])
@@ -31,7 +30,7 @@ func (tree *RTree) Load(items []*Obj) *RTree {
 
 
 	// recursively build the tree with the given data from stratch using OMT algorithm
-	nd = tree.buildTree(data, 0, n-1, 0)
+	var nd = tree.buildTree(data, 0, n-1, 0)
 
 	if len(tree.Data.children) == 0 {
 		// save as is if tree is empty

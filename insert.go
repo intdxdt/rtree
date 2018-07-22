@@ -19,7 +19,7 @@ func (tree *RTree) insert(item *Obj, level int) {
 	var insertPath = make([]*node, 0, tree.maxEntries)
 
 	// find the best node for accommodating the item, saving all nodes along the path too
-	nd, insertPath = chooseSubtree(item.MBR, tree.Data, level, insertPath)
+	nd, insertPath = chooseSubtree(item.MBR, &tree.Data, level, insertPath)
 
 	// put the item into the node item_bbox
 	nd.addChild(newLeafNode(item))
@@ -33,12 +33,12 @@ func (tree *RTree) insert(item *Obj, level int) {
 }
 
 //insert - private
-func (tree *RTree) insertNode(item *node, level int) {
+func (tree *RTree) insertNode(item node, level int) {
 	var nd *node
 	var insertPath []*node
 
 	// find the best node for accommodating the item, saving all nodes along the path too
-	nd, insertPath = chooseSubtree(item.bbox, tree.Data, level, insertPath)
+	nd, insertPath = chooseSubtree(item.bbox, &tree.Data, level, insertPath)
 
 	nd.children = append(nd.children, item)
 	extend(nd.bbox, item.bbox)
@@ -73,7 +73,7 @@ func chooseSubtree(bbox *mbr.MBR, nd *node, level int, path []*node) (*node, []*
 		minArea, minEnlargement = inf, inf
 
 		for i, length := 0, len(nd.children); i < length; i++ {
-			child = nd.children[i]
+			child = &nd.children[i]
 			area = bboxArea(child.bbox)
 			enlargement = enlargedArea(bbox, child.bbox) - area
 

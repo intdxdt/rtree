@@ -136,7 +136,8 @@ func TestQobj_String(t *testing.T) {
 		g.It("test qobject", func() {
 			var box = mbr.MBR{3, 3, 3, 3}
 			var obj = Object(0, &box)
-			var qo = &KObj{newLeafNode(obj), &box, true, 3.4}
+			var nd  = newLeafNode(obj)
+			var qo = &KObj{&nd, &box, true, 3.4}
 			g.Assert(box.String() + " -> 3.4").Equal(qo.String())
 		})
 	})
