@@ -28,7 +28,7 @@ func (tree *RTree) Knn(
 		for i := range nd.children {
 			child = &nd.children[i]
 			var o = &KObj{
-				child, child.bbox,
+				child, &child.bbox,
 				len(child.children) == 0, -1,
 			}
 			o.Dist = score(&query, o)

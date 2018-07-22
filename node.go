@@ -10,7 +10,7 @@ type node struct {
 	item     *Obj
 	height   int
 	leaf     bool
-	bbox     *mbr.MBR
+	bbox     mbr.MBR
 }
 
 //newNode creates a new node
@@ -20,7 +20,7 @@ func newNode(item *Obj, height int, leaf bool, children []node) node {
 		item:     item,
 		height:   height,
 		leaf:     leaf,
-		bbox:     item.MBR,
+		bbox:     *item.MBR,
 	}
 }
 
@@ -31,14 +31,14 @@ func newLeafNode(item *Obj) node {
 		item:     item,
 		height:   1,
 		leaf:     true,
-		bbox:     item.MBR,
+		bbox:     *item.MBR,
 	}
 }
 
 
 //MBR returns bbox property
 func (nd *node) BBox() *mbr.MBR {
-	return nd.bbox
+	return &nd.bbox
 }
 
 //GetItem from node

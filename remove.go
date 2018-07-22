@@ -138,7 +138,7 @@ func (tree *RTree) removeItem(item *mbr.MBR, predicate func(*node, int) bool) *R
 			}
 		}
 
-		if !goingUp && !nd.leaf && contains(nd.bbox, bbox) {
+		if !goingUp && !nd.leaf && contains(&nd.bbox, bbox) {
 			// go down
 			path = append(path, nd)
 			indexes = append(indexes, i)

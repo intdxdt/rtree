@@ -5,8 +5,8 @@ import (
 	"github.com/intdxdt/mbr"
 )
 
-func emptyMBR() *mbr.MBR {
-	return &mbr.MBR{
+func emptyMBR() mbr.MBR {
+	return mbr.MBR{
 		math.Inf(1), math.Inf(1),
 		math.Inf(-1), math.Inf(-1),
 	}
@@ -20,9 +20,10 @@ type Obj struct {
 }
 
 func emptyObject() *Obj {
+	var box = emptyMBR()
 	return &Obj{
 		Id:     -1,
-		MBR:    emptyMBR(),
+		MBR:    &box,
 		Object: nil,
 		Meta:   -1,
 	}

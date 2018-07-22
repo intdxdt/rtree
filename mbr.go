@@ -11,10 +11,10 @@ func calcBBox(nd *node) {
 }
 
 //distBBox computes min bounding rectangle of node children from k to p-1.
-func distBBox(nd *node, k, p int) *mbr.MBR {
+func distBBox(nd *node, k, p int) mbr.MBR {
 	var bbox = emptyMBR()
 	for i := k; i < p; i++ {
-		extend(bbox, nd.children[i].bbox)
+		extend(&bbox, &nd.children[i].bbox)
 	}
 	return bbox
 }
@@ -33,16 +33,16 @@ func (tree *RTree) allDistMargin(nd *node, m, M int, sortBy SortBy) float64 {
 	var i int
 	var leftBBox = distBBox(nd, 0, m)
 	var rightBBox = distBBox(nd, M-m, M)
-	var margin = bboxMargin(leftBBox) + bboxMargin(rightBBox)
+	var margin = bboxMargin(&leftBBox) + bboxMargin(&rightBBox)
 
 	for i = m; i < M-m; i++ {
-		extend(leftBBox, nd.children[i].bbox)
-		margin += bboxMargin(leftBBox)
+		extend(&leftBBox, &nd.children[i].bbox)
+		margin += bboxMargin(&leftBBox)
 	}
 
 	for i = M - m - 1; i >= m; i-- {
-		extend(rightBBox, nd.children[i].bbox)
-		margin += bboxMargin(rightBBox)
+		extend(&rightBBox, &nd.children[i].bbox)
+		margin += bboxMargin(&rightBBox)
 	}
 	return margin
 }
