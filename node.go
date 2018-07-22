@@ -52,9 +52,9 @@ func (nd *node) addChild(child *node) {
 
 //Constructs children of node
 func makeChildren(items []*Obj) []*node {
-	var chs = make([]*node, len(items))
+	var chs = make([]*node, 0, len(items))
 	for i := range items {
-		chs[i] = newLeafNode(items[i])
+		chs = append(chs, newLeafNode(items[i]))
 	}
 	return chs
 }

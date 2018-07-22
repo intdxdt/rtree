@@ -9,8 +9,7 @@ func (tree *RTree) buildTree(items []*Obj, left, right, height int) *node {
     if N <= M {
         // reached leaf level return leaf
         n = newNode(
-            emptyObject(),
-            1, true,
+            emptyObject(), 1, true,
             makeChildren(items[left: right + 1: right + 1]),
         )
         calcBBox(n)
