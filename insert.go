@@ -19,17 +19,17 @@ func (tree *RTree) insert(item *Obj, level int) {
 	var insertPath = make([]*node, 0, tree.maxEntries)
 
 	// find the best node for accommodating the item, saving all nodes along the path too
-	nd, insertPath = chooseSubtree(item.MBR, &tree.Data, level, insertPath)
+	nd, insertPath = chooseSubtree(&item.MBR, &tree.Data, level, insertPath)
 
 	// put the item into the node item_bbox
 	nd.addChild(newLeafNode(item))
-	extend(&nd.bbox, item.MBR)
+	extend(&nd.bbox, &item.MBR)
 
 	// split on node overflow propagate upwards if necessary
 	level, insertPath = tree.splitOnOverflow(level, insertPath)
 
 	// adjust bboxes along the insertion path
-	tree.adjustParentBBoxes(item.MBR, insertPath, level)
+	tree.adjustParentBBoxes(&item.MBR, insertPath, level)
 }
 
 //insert - private

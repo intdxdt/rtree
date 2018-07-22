@@ -20,7 +20,7 @@ func newNode(item *Obj, height int, leaf bool, children []node) node {
 		item:     item,
 		height:   height,
 		leaf:     leaf,
-		bbox:     *item.MBR,
+		bbox:     item.MBR,
 	}
 }
 
@@ -31,7 +31,7 @@ func newLeafNode(item *Obj) node {
 		item:     item,
 		height:   1,
 		leaf:     true,
-		bbox:     *item.MBR,
+		bbox:     item.MBR,
 	}
 }
 

@@ -15,21 +15,20 @@ func emptyMBR() mbr.MBR {
 type Obj struct {
 	Id     int
 	Meta   int
-	MBR    *mbr.MBR
+	MBR    mbr.MBR
 	Object interface{}
 }
 
 func emptyObject() *Obj {
-	var box = emptyMBR()
 	return &Obj{
 		Id:     -1,
-		MBR:    &box,
-		Object: nil,
 		Meta:   -1,
+		MBR:    emptyMBR(),
+		Object: nil,
 	}
 }
 
-func Object(id int, box *mbr.MBR, object ...interface{}) *Obj {
+func Object(id int, box mbr.MBR, object ...interface{}) *Obj {
 	var obj interface{}
 	if len(object) > 0 {
 		obj = object[0]

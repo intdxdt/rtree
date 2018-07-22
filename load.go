@@ -8,7 +8,7 @@ import (
 func (tree *RTree) LoadBoxes(data []mbr.MBR) *RTree {
 	var items = make([]*Obj, 0, len(data))
 	for i := range data {
-		items = append(items, &Obj{Id: i, MBR: &data[i]})
+		items = append(items, &Obj{Id: i, MBR: data[i]})
 	}
 	return tree.Load(items)
 }

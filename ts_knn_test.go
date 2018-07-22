@@ -32,14 +32,14 @@ func initKnn() {
 	}
 	knnData = make([]*Obj, 0, len(dat))
 	for i := range dat {
-		knnData = append(knnData, Object(i, &dat[i]))
+		knnData = append(knnData, Object(i, dat[i]))
 	}
 }
 
-func foundIn(needle *mbr.MBR, haystack []*mbr.MBR) bool {
+func foundIn(needle mbr.MBR, haystack []mbr.MBR) bool {
 	var found = false
 	for i := range haystack {
-		found = needle.Equals(haystack[i])
+		found = needle.Equals(&haystack[i])
 		if found {
 			break
 		}
@@ -55,7 +55,7 @@ func TestRtreeKNN(t *testing.T) {
 			var rt = NewRTree(9)
 			rt.Load(knnData)
 			var  nn = rt.Knn(mbr.CreateMBR(40, 40, 40, 40), 10, scoreFn)
-			var result = []*mbr.MBR{
+			var result = []mbr.MBR{
 				{38, 39, 39, 39}, {35, 39, 38, 40}, {34, 43, 36, 44},
 				{29, 42, 33, 42}, {48, 38, 48, 40}, {31, 47, 33, 50},
 				{34, 29, 34, 32}, {29, 45, 31, 47}, {39, 52, 39, 56},
@@ -125,7 +125,8 @@ func fnRichData() []*Obj {
 		{3, 4, 3, 4}, {2.5, 4, 2.5, 4},
 	}
 	for i := range data {
-		richData = append(richData, Object(i, &data[i], &RichData{&data[i], i + 1}))
+		richData = append(richData,
+			Object(i, data[i], &RichData{&data[i], i + 1}))
 	}
 	return richData
 }
@@ -135,7 +136,7 @@ func TestQobj_String(t *testing.T) {
 	g.Describe("", func() {
 		g.It("test qobject", func() {
 			var box = mbr.MBR{3, 3, 3, 3}
-			var obj = Object(0, &box)
+			var obj = Object(0, box)
 			var nd  = newLeafNode(obj)
 			var qo = &KObj{&nd, &box, true, 3.4}
 			g.Assert(box.String() + " -> 3.4").Equal(qo.String())

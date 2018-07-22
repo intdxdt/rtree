@@ -41,7 +41,7 @@ var foundTotal int
 func Benchmark_Insert_OneByOne_SmallBigData(b *testing.B) {
 	var tree = NewRTree(maxFill)
 	for i := 0; i < len(BenchData); i++ {
-		tree.Insert(Object(i, &BenchData[i]))
+		tree.Insert(Object(i, BenchData[i]))
 	}
 	box = tree.Data.BBox()
 }

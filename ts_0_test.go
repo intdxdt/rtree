@@ -43,7 +43,7 @@ func someData(n int) []mbr.MBR {
 func testResults(g *goblin.G, objects []*Obj, boxes Boxes) {
 	var results = make([]mbr.MBR, 0, len(objects))
 	for i := range objects {
-		results = append(results, *objects[i].MBR)
+		results = append(results, objects[i].MBR)
 	}
 
 	sort.Sort(Boxes(results))
@@ -113,8 +113,8 @@ func TestRtreeRbush(t *testing.T) {
 			var tree = NewRTree(8).LoadBoxes(data)
 			tree.LoadBoxes(data[0:3])
 			var tree2 = NewRTree(8).LoadBoxes(data).Insert(
-				&Obj{Id: 0, MBR: &data[0]},
-			).Insert(&Obj{Id: 1, MBR: &data[1]}).Insert(&Obj{Id: 2, MBR: &data[2]})
+				&Obj{Id: 0, MBR: data[0]},
+			).Insert(&Obj{Id: 1, MBR: data[1]}).Insert(&Obj{Id: 2, MBR: data[2]})
 			g.Assert(tree.Data).Eql(tree2.Data)
 		})
 
@@ -207,8 +207,7 @@ func TestRtreeRbush(t *testing.T) {
 			var data = []mbr.MBR{{0, 0, 0, 0}, {2, 2, 2, 2}, {1, 1, 1, 1},}
 			var tree = NewRTree(4)
 			tree.LoadBoxes(data)
-			var o = mbr.CreateMBR(3, 3, 3, 3)
-			tree.Insert(Object(0, &o))
+			tree.Insert(Object(0, mbr.CreateMBR(3, 3, 3, 3)))
 			g.Assert(tree.Data.leaf).IsTrue()
 			g.Assert(tree.Data.height).Equal(1)
 			var box = mbr.CreateMBR(0, 0, 3, 3)
@@ -227,16 +226,16 @@ func TestRtreeRbush(t *testing.T) {
 		g.It("#insert forms a valid tree if items are inserted one by one", func() {
 			var tree = NewRTree(4)
 			for i := 0; i < len(data); i++ {
-				tree.Insert(Object(i, &data[i]))
+				tree.Insert(Object(i, data[i]))
 			}
 
 			var tree2 = NewRTree(4).LoadBoxes(data)
 			g.Assert(tree.Data.height-tree2.Data.height <= 1).IsTrue()
 
 			var boxes2 = make([]mbr.MBR, 0)
-			all2 := tree2.All()
+			var all2 = tree2.All()
 			for i := 0; i < len(all2); i++ {
-				boxes2 = append(boxes2, *all2[i].MBR)
+				boxes2 = append(boxes2, all2[i].MBR)
 			}
 			testResults(g, tree.All(), boxes2)
 		})
@@ -265,8 +264,7 @@ func TestRtreeRbush(t *testing.T) {
 			var tree = NewRTree(0).LoadBoxes(data)
 			var tree2 = NewRTree(0).LoadBoxes(data)
 			var query = mbr.CreateMBR(13, 13, 13, 13)
-			var o = mbr.CreateMBR(13, 13, 13, 13)
-			var querybox = Object(0, &o)
+			var querybox = Object(0, mbr.CreateMBR(13, 13, 13, 13))
 			g.Assert(tree.Data).Eql(tree2.RemoveMBR(&query).Data)
 			g.Assert(tree.Data).Eql(tree2.RemoveObj(querybox).Data)
 			g.Assert(tree.Data).Eql(tree2.RemoveObj(item).Data)
@@ -288,7 +286,7 @@ func TestRtreeRbush(t *testing.T) {
 
 		g.It("should have chainable API", func() {
 			g.Assert(NewRTree(4).LoadBoxes(data).Insert(
-				Object(0, &data[0]),
+				Object(0, data[0]),
 			).RemoveMBR(&data[0]).Clear().IsEmpty()).IsTrue()
 		})
 	})

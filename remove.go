@@ -84,7 +84,7 @@ func (tree *RTree) RemoveObj(item *Obj) *RTree {
 	if (item == nil) {
 		return tree
 	}
-	tree.removeItem(item.MBR,
+	tree.removeItem(&item.MBR,
 		func(nd *node, i int) bool {
 			return nd.children[i].item == item
 		})
