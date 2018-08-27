@@ -80,11 +80,11 @@ func (tree *RTree) condense(path []*node) {
 
 //Remove Item from RTree
 //NOTE:if item is a bbox , then first found bbox is removed
-func (tree *RTree) RemoveObj(item *Obj) *RTree {
+func (tree *RTree) RemoveObj(item BoxObj) *RTree {
 	if (item == nil) {
 		return tree
 	}
-	tree.removeItem(&item.MBR,
+	tree.removeItem(item.BBox(),
 		func(nd *node, i int) bool {
 			return nd.children[i].item == item
 		})
@@ -138,7 +138,7 @@ func (tree *RTree) removeItem(item *mbr.MBR, predicate func(*node, int) bool) *R
 			}
 		}
 
-		if !goingUp && !nd.leaf && contains(&nd.bbox, bbox) {
+		if !goingUp && !nd.leaf && contains(nd.bbox, bbox) {
 			// go down
 			path = append(path, nd)
 			indexes = append(indexes, i)

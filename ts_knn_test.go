@@ -7,7 +7,7 @@ import (
 	"github.com/franela/goblin"
 )
 
-var knnData []*Obj
+var knnData []BoxObj
 
 func scoreFn(query *mbr.MBR, boxer  *KObj) float64 {
 	return query.Distance(boxer.MBR)
@@ -30,13 +30,13 @@ func initKnn() {
 		{1, 14, 1, 14}, {33, 77, 34, 77}, {94, 56, 98, 59}, {75, 25, 78, 26}, {17, 73, 20, 74}, {11, 3, 12, 4}, {45, 12, 47, 12}, {38, 39, 39, 39},
 		{99, 3, 103, 5}, {41, 92, 44, 96}, {79, 40, 79, 41}, {29, 2, 29, 4},
 	}
-	knnData = make([]*Obj, 0, len(dat))
+	knnData = make([]BoxObj, 0, len(dat))
 	for i := range dat {
-		knnData = append(knnData, Object(i, dat[i]))
+		knnData = append(knnData, &dat[i])
 	}
 }
 
-func foundIn(needle mbr.MBR, haystack []mbr.MBR) bool {
+func foundIn(needle *mbr.MBR, haystack []mbr.MBR) bool {
 	var found = false
 	for i := range haystack {
 		found = needle.Equals(&haystack[i])
@@ -62,7 +62,7 @@ func TestRtreeKNN(t *testing.T) {
 				{57, 36, 61, 40},
 			}
 			for _, n := range nn {
-				g.Assert(foundIn(n.MBR, result)).IsTrue()
+				g.Assert(foundIn(n.BBox(), result)).IsTrue()
 			}
 
 			nn = rt.Knn(mbr.CreateMBR(40, 40, 40, 40), 1000, scoreFn)
@@ -106,7 +106,7 @@ func TestRtreeKNNPredScore(t *testing.T) {
 
 			g.Assert(len(res)).Equal(2)
 			for i, r := range res {
-				g.Assert(r.MBR.Equals(predicateMbr[i])).IsTrue()
+				g.Assert(r.BBox().Equals(predicateMbr[i])).IsTrue()
 			}
 		})
 	})
@@ -117,16 +117,15 @@ type RichData struct {
 	version int
 }
 
-func fnRichData() []*Obj {
-	var richData = make([]*Obj, 0)
+func fnRichData() []BoxObj {
+	var richData = make([]BoxObj, 0)
 	var data = []mbr.MBR{
 		{1, 2, 1, 2}, {3, 3, 3, 3}, {5, 5, 5, 5},
 		{4, 2, 4, 2}, {2, 4, 2, 4}, {5, 3, 5, 3},
 		{3, 4, 3, 4}, {2.5, 4, 2.5, 4},
 	}
 	for i := range data {
-		richData = append(richData,
-			Object(i, data[i], &RichData{&data[i], i + 1}))
+		richData = append(richData, &RichData{&data[i], i + 1})
 	}
 	return richData
 }
@@ -136,8 +135,7 @@ func TestQobj_String(t *testing.T) {
 	g.Describe("", func() {
 		g.It("test qobject", func() {
 			var box = mbr.MBR{3, 3, 3, 3}
-			var obj = Object(0, box)
-			var nd  = newLeafNode(obj)
+			var nd  = newLeafNode(&box)
 			var qo = &KObj{&nd, &box, true, 3.4}
 			g.Assert(box.String() + " -> 3.4").Equal(qo.String())
 		})
@@ -156,13 +154,13 @@ func TestRtreeKNNPredicate(t *testing.T) {
 				return query.Distance(boxer.MBR)
 			}
 			var predicate = func(v *KObj) (bool, bool) {
-				return v.GetItem().Object.(*RichData).version < 5, false
+				return v.GetItem().(*RichData).version < 5, false
 			}
 			var result = rt.Knn(mbr.CreateMBR(2, 4, 2, 4), 1, scoreFn, predicate)
 
 			g.Assert(len(result)).Equal(1)
 
-			var v = result[0].Object.(*RichData)
+			var v = result[0].(*RichData)
 			var expectsVersion = 2
 
 			g.Assert(v.MBR.Equals(&mbr.MBR{3, 3, 3, 3})).IsTrue()

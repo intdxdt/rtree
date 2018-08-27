@@ -5,7 +5,7 @@ import (
 )
 
 //Insert item
-func (tree *RTree) Insert(item *Obj) *RTree {
+func (tree *RTree) Insert(item BoxObj) *RTree {
 	if item == nil {
 		return tree
 	}
@@ -14,22 +14,22 @@ func (tree *RTree) Insert(item *Obj) *RTree {
 }
 
 //insert - private
-func (tree *RTree) insert(item *Obj, level int) {
+func (tree *RTree) insert(item BoxObj, level int) {
 	var nd *node
 	var insertPath = make([]*node, 0, tree.maxEntries)
 
 	// find the best node for accommodating the item, saving all nodes along the path too
-	nd, insertPath = chooseSubtree(&item.MBR, &tree.Data, level, insertPath)
+	nd, insertPath = chooseSubtree(item.BBox(), &tree.Data, level, insertPath)
 
 	// put the item into the node item_bbox
 	nd.addChild(newLeafNode(item))
-	extend(&nd.bbox, &item.MBR)
+	extend(nd.bbox, item.BBox())
 
 	// split on node overflow propagate upwards if necessary
 	level, insertPath = tree.splitOnOverflow(level, insertPath)
 
 	// adjust bboxes along the insertion path
-	tree.adjustParentBBoxes(&item.MBR, insertPath, level)
+	tree.adjustParentBBoxes(item.BBox(), insertPath, level)
 }
 
 //insert - private
@@ -38,16 +38,16 @@ func (tree *RTree) insertNode(item node, level int) {
 	var insertPath []*node
 
 	// find the best node for accommodating the item, saving all nodes along the path too
-	nd, insertPath = chooseSubtree(&item.bbox, &tree.Data, level, insertPath)
+	nd, insertPath = chooseSubtree(item.bbox, &tree.Data, level, insertPath)
 
 	nd.children = append(nd.children, item)
-	extend(&nd.bbox, &item.bbox)
+	extend(nd.bbox, item.bbox)
 
 	// split on node overflow propagate upwards if necessary
 	level, insertPath = tree.splitOnOverflow(level, insertPath)
 
 	// adjust bboxes along the insertion path
-	tree.adjustParentBBoxes(&item.bbox, insertPath, level)
+	tree.adjustParentBBoxes(item.bbox, insertPath, level)
 }
 
 // split on node overflow propagate upwards if necessary
@@ -74,8 +74,8 @@ func chooseSubtree(bbox *mbr.MBR, nd *node, level int, path []*node) (*node, []*
 
 		for i, length := 0, len(nd.children); i < length; i++ {
 			child = &nd.children[i]
-			area = bboxArea(&child.bbox)
-			enlargement = enlargedArea(bbox, &child.bbox) - area
+			area = bboxArea(child.bbox)
+			enlargement = enlargedArea(bbox, child.bbox) - area
 
 			// choose entry with the least area enlargement
 			if enlargement < minEnlargement {

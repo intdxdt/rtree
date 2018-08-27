@@ -5,13 +5,13 @@ import (
 )
 
 //Search item
-func (tree *RTree) Search(query mbr.MBR) []*Obj {
+func (tree *RTree) Search(query mbr.MBR) []BoxObj {
 	var bbox = &query
-	var result []*Obj
+	var result []BoxObj
 	var nd = &tree.Data
 
-	if !intersects(bbox, &nd.bbox) {
-		return []*Obj{}
+	if !intersects(bbox, nd.bbox) {
+		return []BoxObj{}
 	}
 
 	var nodesToSearch []*node
@@ -21,7 +21,7 @@ func (tree *RTree) Search(query mbr.MBR) []*Obj {
 	for {
 		for i, length := 0, len(nd.children); i < length; i++ {
 			child = &nd.children[i]
-			childBBox = &child.bbox
+			childBBox = child.bbox
 
 			if intersects(bbox, childBBox) {
 				if nd.leaf {
@@ -40,7 +40,7 @@ func (tree *RTree) Search(query mbr.MBR) []*Obj {
 		}
 	}
 
-	//var objs = make([]*Obj, 0, len(result))
+	//var objs = make([]BoxObj, 0, len(result))
 	//for i := range result {
 	//	objs = append(objs, result[i].item)
 	//}
@@ -48,12 +48,12 @@ func (tree *RTree) Search(query mbr.MBR) []*Obj {
 }
 
 //All items from  root node
-func (tree *RTree) All() []*Obj {
-	return all(&tree.Data, []*Obj{})
+func (tree *RTree) All() []BoxObj {
+	return all(&tree.Data, []BoxObj{})
 }
 
 //all - fetch all items from node
-func all(nd *node, result []*Obj) []*Obj {
+func all(nd *node, result []BoxObj) []BoxObj {
 	var nodesToSearch []*node
 	for {
 		if nd.leaf {

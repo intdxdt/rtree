@@ -51,27 +51,24 @@ func TestRtree(t *testing.T) {
 	g := goblin.Goblin(t)
 
 	g.Describe("rtree : node, leaf, inode", func() {
-		var pt  = &Pnt{0, 0}
-		var box = pt.BBox()
-		var  item    = Object(0, *box, pt )
-		var  pth     = make(NodePath, 0)
-		var  b       = newNode(item, 0, true, nil)
+		var pt = &Pnt{0, 0}
+		var item = pt
+		var pth NodePath
+		var b = newNode(item, 0, true, nil)
 
 		pth = append(pth, b)
 		pth = append(pth, b)
 		pth = append(pth, b)
 
-		n := newNode(item, 1, false, pth)
-
-		var items = make([]*Obj, 0, 10)
+		var n = newNode(item, 1, false, pth)
+		var items = make([]BoxObj, 0, 10)
 		var nodes = make(NodePath, 0, 0)
 
 		items = append(items, item)
 		nodes = append(nodes, b)
 
 		g.It("type node check ", func() {
-			g.Assert(b.GetItem().Object.(*Pnt)).Eql(pt)
-
+			g.Assert(b.GetItem().(*Pnt)).Eql(pt)
 			g.Assert(b.leaf).Equal(true)
 			g.Assert(n.leaf).Equal(false)
 			g.Assert(len(n.children)).Equal(3)
@@ -100,11 +97,11 @@ func TestRtree(t *testing.T) {
 			{68.88687814624431, 70.06499982957165, 70.86758866753506, 78.39070584782843}, {53.346140703038856, 38.61621943306142, 58.18001677406793, 46.227279405415416}, {60.91283806646173, 5.328797186659199, 70.97382774644399, 11.165367727083606},
 		}
 
-		var tree        = NewRTree(9)
-		var length      = len(data)
-		var data1By1    = data[:length:length]
+		var tree = NewRTree(9)
+		var length = len(data)
+		var data1By1 = data[:length:length]
 		for i := range data1By1 {
-			tree.Insert(Object(i, data1By1[i]))
+			tree.Insert(&data1By1[i])
 		}
 
 		g.It("same root bounds for : bulkload & single insert ", func() {
@@ -118,11 +115,11 @@ func TestRtree(t *testing.T) {
 			var dataOnebyone = data[:length:length]
 			for i := range dataOnebyone {
 				//fmt.Println(i, " -> ", len(oneT.Data.children))
-				oneT.Insert(Object(i, dataOnebyone[i]))
+				oneT.Insert(&dataOnebyone[i])
 			}
 			//fill zero size
 			for i := range dataOnebyone {
-				oneDeft.Insert(Object(i, dataOnebyone[i]))
+				oneDeft.Insert(&dataOnebyone[i])
 			}
 
 			var oneMbr = oneT.Data.bbox
@@ -132,9 +129,9 @@ func TestRtree(t *testing.T) {
 
 			//bulkload
 			var dataBulkload = data[:length:length]
-			var bulkItems = make([]*Obj, len(dataBulkload))
+			var bulkItems = make([]BoxObj, len(dataBulkload))
 			for i := range bulkItems {
-				bulkItems[i] = Object(i, dataBulkload[i])
+				bulkItems[i] = &dataBulkload[i]
 			}
 			bulkT.Load(bulkItems)
 			bukMbr := bulkT.Data.bbox
@@ -170,7 +167,7 @@ func TestRtree(t *testing.T) {
 		var length = len(data)
 		var dataOnebyone = data[:length:length]
 		for i := range dataOnebyone {
-			tree.Insert(Object(i, dataOnebyone[i]))
+			tree.Insert(&dataOnebyone[i])
 		}
 
 		g.It("same root bounds for : bulkload & single insert ", func() {
@@ -206,20 +203,20 @@ func TestRtree(t *testing.T) {
 		var query5 = mbr.MBR{0., 0., 100, 100}
 		var query6 = mbr.MBR{182.17619056720642, 15.748541593521262, 205.43811579298725, 65.97783146157896}
 
-		var tree     = NewRTree()
+		var tree = NewRTree()
 		var bulkTree = NewRTree()
 
-		var length       = len(data)
+		var length = len(data)
 		var dataOnebyone = data[:length:length]
 		var dataBulkload = data[:length:length]
-		var bulkItems    = make([]*Obj, len(dataBulkload))
+		var bulkItems = make([]BoxObj, len(dataBulkload))
 
 		for i := range bulkItems {
-			bulkItems[i] = Object(i, dataBulkload[i])
+			bulkItems[i] = &dataBulkload[i]
 		}
 
 		for i := range dataOnebyone {
-			tree.Insert(Object(i, dataOnebyone[i]))
+			tree.Insert(&dataOnebyone[i])
 		}
 		bulkTree.Load(bulkItems)
 

@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type Boxes []mbr.MBR
+type Boxes []*mbr.MBR
 
 //Len for sort interface
 func (o Boxes) Len() int {
@@ -40,22 +40,22 @@ func someData(n int) []mbr.MBR {
 	return data
 }
 
-func testResults(g *goblin.G, objects []*Obj, boxes Boxes) {
-	var results = make([]mbr.MBR, 0, len(objects))
+func testResults(g *goblin.G, objects []BoxObj, boxes Boxes) {
+	var results = make([]*mbr.MBR, 0, len(objects))
 	for i := range objects {
-		results = append(results, objects[i].MBR)
+		results = append(results, objects[i].BBox())
 	}
 
 	sort.Sort(Boxes(results))
 	sort.Sort(boxes)
 	g.Assert(len(results)).Equal(len(boxes))
 	for i, n := range results {
-		g.Assert(n.Equals(&boxes[i])).IsTrue()
+		g.Assert(n.Equals(boxes[i])).IsTrue()
 	}
 }
 
-func getObjs(nodes []node) []*Obj {
-	var objs = make([]*Obj, 0, len(nodes))
+func getObjs(nodes []node) []BoxObj {
+	var objs = make([]BoxObj, 0, len(nodes))
 	for _, o := range nodes {
 		objs = append(objs, o.item)
 	}
@@ -91,20 +91,20 @@ func TestRtreeRbush(t *testing.T) {
 			}
 			var tree = NewRTree(4)
 			tree.LoadBoxes(data)
-			testResults(g, tree.Search(mbr.CreateMBR(-180, -90, 180, 90)), []mbr.MBR{
+			testResults(g, tree.Search(mbr.CreateMBR(-180, -90, 180, 90)), []*mbr.MBR{
 				{-115, 45, -105, 55}, {105, 45, 115, 55}, {105, -55, 115, -45}, {-115, -55, -105, -45},
 			})
 
-			testResults(g, tree.Search(mbr.CreateMBR(-180, -90, 0, 90)), []mbr.MBR{
+			testResults(g, tree.Search(mbr.CreateMBR(-180, -90, 0, 90)), []*mbr.MBR{
 				{-115, 45, -105, 55}, {-115, -55, -105, -45},
 			})
-			testResults(g, tree.Search(mbr.CreateMBR(0, -90, 180, 90)), []mbr.MBR{
+			testResults(g, tree.Search(mbr.CreateMBR(0, -90, 180, 90)), []*mbr.MBR{
 				{105, 45, 115, 55}, {105, -55, 115, -45},
 			})
-			testResults(g, tree.Search(mbr.CreateMBR(-180, 0, 180, 90)), []mbr.MBR{
+			testResults(g, tree.Search(mbr.CreateMBR(-180, 0, 180, 90)), []*mbr.MBR{
 				{-115, 45, -105, 55}, {105, 45, 115, 55},
 			})
-			testResults(g, tree.Search(mbr.CreateMBR(-180, -90, 180, 0)), []mbr.MBR{
+			testResults(g, tree.Search(mbr.CreateMBR(-180, -90, 180, 0)), []*mbr.MBR{
 				{105, -55, 115, -45}, {-115, -55, -105, -45},
 			})
 		})
@@ -113,23 +113,23 @@ func TestRtreeRbush(t *testing.T) {
 			var tree = NewRTree(8).LoadBoxes(data)
 			tree.LoadBoxes(data[0:3])
 			var tree2 = NewRTree(8).LoadBoxes(data).Insert(
-				&Obj{Id: 0, MBR: data[0]},
-			).Insert(&Obj{Id: 1, MBR: data[1]}).Insert(&Obj{Id: 2, MBR: data[2]})
+				data[0].BBox(),
+			).Insert(data[1].BBox()).Insert(data[2].BBox())
 			g.Assert(tree.Data).Eql(tree2.Data)
 		})
 
 		g.It("#load does nothing if loading empty data", func() {
-			var tree = NewRTree(0).Load(make([]*Obj, 0))
+			var tree = NewRTree(0).Load(make([]BoxObj, 0))
 			g.Assert(tree.IsEmpty()).IsTrue()
 		})
 
 		g.It("#load properly splits tree root when merging trees of the same height", func() {
-			var cloneData = make([]mbr.MBR, len(data))
+			var cloneData = make([]*mbr.MBR, len(data))
 			for i := 0; i < len(data); i++ {
-				cloneData[i] = data[i].Clone()
+				cloneData[i] = &data[i]
 			}
 			for i := 0; i < len(data); i++ {
-				cloneData = append(cloneData, data[i].Clone())
+				cloneData = append(cloneData, &data[i])
 			}
 			var tree = NewRTree(4).LoadBoxes(data).LoadBoxes(data)
 			testResults(g, tree.All(), cloneData)
@@ -137,12 +137,12 @@ func TestRtreeRbush(t *testing.T) {
 
 		g.It("#load properly merges data of smaller or bigger tree heights", func() {
 			var smaller = someData(10)
-			var cloneData = make([]mbr.MBR, len(data))
+			var cloneData = make([]*mbr.MBR, len(data))
 			for i := 0; i < len(data); i++ {
-				cloneData[i] = data[i].Clone()
+				cloneData[i] = &data[i]
 			}
 			for i := 0; i < len(smaller); i++ {
-				cloneData = append(cloneData, smaller[i].Clone())
+				cloneData = append(cloneData, &smaller[i])
 			}
 
 			var tree1 = NewRTree(4).LoadBoxes(data).LoadBoxes(smaller)
@@ -156,13 +156,15 @@ func TestRtreeRbush(t *testing.T) {
 			N = 8020
 			var smaller = GenDataItems(N, 1)
 			var larger = GenDataItems(2*N, 1)
-			var cloneData = make([]mbr.MBR, len(larger))
+			var cloneData = make([]*mbr.MBR, len(larger))
 
 			for i := 0; i < len(larger); i++ {
-				cloneData[i] = larger[i].Clone()
+				box := larger[i].Clone()
+				cloneData[i] = &box
 			}
 			for i := 0; i < len(smaller); i++ {
-				cloneData = append(cloneData, smaller[i].Clone())
+				box := smaller[i].Clone()
+				cloneData = append(cloneData, &box)
 			}
 
 			var tree1 = NewRTree(64).LoadBoxes(larger).LoadBoxes(smaller)
@@ -175,7 +177,7 @@ func TestRtreeRbush(t *testing.T) {
 		g.It("#search finds matching points in the tree given a bbox", func() {
 			var tree = NewRTree(4).LoadBoxes(data)
 			var result = tree.Search(mbr.CreateMBR(40, 20, 80, 70))
-			testResults(g, result, []mbr.MBR{
+			testResults(g, result, []*mbr.MBR{
 				{70, 20, 70, 20}, {75, 25, 75, 25}, {45, 45, 45, 45}, {50, 50, 50, 50}, {60, 60, 60, 60}, {70, 70, 70, 70},
 				{45, 20, 45, 20}, {45, 70, 45, 70}, {75, 50, 75, 50}, {50, 25, 50, 25}, {60, 35, 60, 35}, {70, 45, 70, 45},
 			})
@@ -193,9 +195,9 @@ func TestRtreeRbush(t *testing.T) {
 		})
 
 		g.It("#all <==>.Data returns all points in the tree", func() {
-			var cloneData = make([]mbr.MBR, len(data))
+			var cloneData = make([]*mbr.MBR, len(data))
 			for i := 0; i < len(data); i++ {
-				cloneData[i] = data[i]
+				cloneData[i] = &data[i]
 			}
 
 			var tree = NewRTree(4).LoadBoxes(data)
@@ -205,20 +207,22 @@ func TestRtreeRbush(t *testing.T) {
 
 		g.It("#insert adds an item to an existing tree correctly", func() {
 			var data = []mbr.MBR{{0, 0, 0, 0}, {2, 2, 2, 2}, {1, 1, 1, 1},}
-			var tree = NewRTree(4)
-			tree.LoadBoxes(data)
-			tree.Insert(Object(0, mbr.CreateMBR(3, 3, 3, 3)))
+			var tree = NewRTree(4).LoadBoxes(data)
+
+			var box33 = mbr.CreateMBR(3, 3, 3, 3)
+			tree.Insert(&box33)
 			g.Assert(tree.Data.leaf).IsTrue()
 			g.Assert(tree.Data.height).Equal(1)
-			var box = mbr.CreateMBR(0, 0, 3, 3)
-			g.Assert(tree.Data.bbox.Equals(&box)).IsTrue()
-			testResults(g, getObjs(tree.Data.children), []mbr.MBR{
+
+			var box03 = mbr.CreateMBR(0, 0, 3, 3)
+			g.Assert(tree.Data.bbox.Equals(&box03)).IsTrue()
+			testResults(g, getObjs(tree.Data.children), []*mbr.MBR{
 				{0, 0, 0, 0}, {1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3},
 			})
 		})
 
 		g.It("#insert does nothing if given nil", func() {
-			var o *Obj
+			var o BoxObj
 			var tree = NewRTree(4).LoadBoxes(data)
 			g.Assert(tree.Data).Eql(NewRTree(4).LoadBoxes(data).Insert(o).Data)
 		})
@@ -226,16 +230,16 @@ func TestRtreeRbush(t *testing.T) {
 		g.It("#insert forms a valid tree if items are inserted one by one", func() {
 			var tree = NewRTree(4)
 			for i := 0; i < len(data); i++ {
-				tree.Insert(Object(i, data[i]))
+				tree.Insert(&data[i])
 			}
 
 			var tree2 = NewRTree(4).LoadBoxes(data)
 			g.Assert(tree.Data.height-tree2.Data.height <= 1).IsTrue()
 
-			var boxes2 = make([]mbr.MBR, 0)
+			var boxes2 = make([]*mbr.MBR, 0)
 			var all2 = tree2.All()
 			for i := 0; i < len(all2); i++ {
-				boxes2 = append(boxes2, all2[i].MBR)
+				boxes2 = append(boxes2, all2[i].BBox())
 			}
 			testResults(g, tree.All(), boxes2)
 		})
@@ -250,9 +254,10 @@ func TestRtreeRbush(t *testing.T) {
 			tree.RemoveMBR(&data[N-1])
 			tree.RemoveMBR(&data[N-2])
 			tree.RemoveMBR(&data[N-3])
-			var cloneData []mbr.MBR
+			var cloneData []*mbr.MBR
 			for i := 3; i < len(data)-3; i++ {
-				cloneData = append(cloneData, data[i].Clone())
+				box := data[i].Clone()
+				cloneData = append(cloneData, &box)
 			}
 
 			testResults(g, tree.All(), cloneData)
@@ -260,13 +265,13 @@ func TestRtreeRbush(t *testing.T) {
 		})
 
 		g.It("#remove does nothing if nothing found", func() {
-			var item *Obj
+			var item BoxObj
 			var tree = NewRTree(0).LoadBoxes(data)
 			var tree2 = NewRTree(0).LoadBoxes(data)
 			var query = mbr.CreateMBR(13, 13, 13, 13)
-			var querybox = Object(0, mbr.CreateMBR(13, 13, 13, 13))
+			var querybox = mbr.CreateMBR(13, 13, 13, 13)
 			g.Assert(tree.Data).Eql(tree2.RemoveMBR(&query).Data)
-			g.Assert(tree.Data).Eql(tree2.RemoveObj(querybox).Data)
+			g.Assert(tree.Data).Eql(tree2.RemoveObj(&querybox).Data)
 			g.Assert(tree.Data).Eql(tree2.RemoveObj(item).Data)
 		})
 
@@ -276,7 +281,7 @@ func TestRtreeRbush(t *testing.T) {
 			for i := 0; i < len(result); i++ {
 				tree.RemoveObj(result[i])
 			}
-			g.Assert(tree.RemoveObj(&Obj{}).IsEmpty()).IsTrue()
+			g.Assert(tree.RemoveObj(nil).IsEmpty()).IsTrue()
 		})
 
 		g.It("#clear should clear all the data in the tree", func() {
@@ -286,7 +291,7 @@ func TestRtreeRbush(t *testing.T) {
 
 		g.It("should have chainable API", func() {
 			g.Assert(NewRTree(4).LoadBoxes(data).Insert(
-				Object(0, data[0]),
+				&data[0],
 			).RemoveMBR(&data[0]).Clear().IsEmpty()).IsTrue()
 		})
 	})
@@ -302,9 +307,9 @@ func TestRtreeUtil(t *testing.T) {
 	g.Describe("Rtree Util", func() {
 		g.It("tests pop nodes", func() {
 			g.Timeout(1 * time.Hour)
-			var a = newNode(Object(0, emptyMBR()), 0, true, nil)
-			var b = newNode(Object(0, emptyMBR()), 1, true, nil)
-			var c = newNode(Object(0, emptyMBR()), 1, true, nil)
+			var a = newNode(universe{}, 0, true, nil)
+			var b = newNode(universe{}, 1, true, nil)
+			var c = newNode(universe{}, 1, true, nil)
 			var nodes = make([]*node, 0)
 			var n *node
 
@@ -330,21 +335,19 @@ func TestRtreeUtil(t *testing.T) {
 			g.Assert(len(nodes)).Equal(0)
 			g.Assert(n == nil).IsTrue()
 
-			var nodes_abc = []node{a, b, c}
-			g.Assert(len(nodes_abc)).Equal(3)
-			nodes_abc = removeNode(nodes_abc, 1)
-			g.Assert(len(nodes_abc)).Equal(2)
-			nodes_abc = removeNode(nodes_abc, 4)
-			g.Assert(len(nodes_abc)).Equal(2)
+			var nodesABC = []node{a, b, c}
+			g.Assert(len(nodesABC)).Equal(3)
+			nodesABC = removeNode(nodesABC, 1)
+			g.Assert(len(nodesABC)).Equal(2)
+			nodesABC = removeNode(nodesABC, 4)
+			g.Assert(len(nodesABC)).Equal(2)
 
 		})
 
 		g.It("tests pop index", func() {
-			a := 0
-			b := 1
-			c := 2
-			var indexes = make([]int, 0)
 			var n int
+			var a, b, c = 0, 1, 2
+			var indexes = make([]int, 0)
 
 			n = popIndex(&indexes)
 			g.Assert(n == 0).IsTrue()

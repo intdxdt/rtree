@@ -5,7 +5,7 @@ import "math"
 // sort an array so that items come in groups of n unsorted items,
 // with groups sorted between each other and
 // combines selection algorithm with binary divide & conquer approach.
-func multiSelect(arr []*Obj, left, right, n int, compare compareNode) {
+func multiSelect(arr []BoxObj, left, right, n int, compare compareNode) {
 	var mid int
 	var stack = make([]int, 2)
 	stack[0], stack[1] = left, right
@@ -25,11 +25,11 @@ func multiSelect(arr []*Obj, left, right, n int, compare compareNode) {
 }
 
 // sort array between left and right (inclusive) so that the smallest k elements come first (unordered)
-func selectBox(arr []*Obj, left, right, k int, compare compareNode) {
+func selectBox(arr []BoxObj, left, right, k int, compare compareNode) {
 	var i, j int
 	var fn, fi, fNewLeft, fNewRight, fsn, fz, fs, fsd float64
 	var fLeft, fRight, fk = float64(left), float64(right), float64(k)
-	var t *Obj
+	var t BoxObj
 
 	for right > left {
 		//the arbitrary constants 600 and 0.5 are used in the original

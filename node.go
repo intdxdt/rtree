@@ -7,42 +7,42 @@ import (
 //node type for internal node
 type node struct {
 	children []node
-	item     *Obj
+	item     BoxObj
 	height   int
 	leaf     bool
-	bbox     mbr.MBR
+	bbox     *mbr.MBR
 }
 
 //newNode creates a new node
-func newNode(item *Obj, height int, leaf bool, children []node) node {
+func newNode(item BoxObj, height int, leaf bool, children []node) node {
 	return node{
 		children: children,
 		item:     item,
 		height:   height,
 		leaf:     leaf,
-		bbox:     item.MBR,
+		bbox:     item.BBox(),
 	}
 }
 
 //node type for internal node
-func newLeafNode(item *Obj) node {
+func newLeafNode(item BoxObj) node {
 	return node{
 		children: []node{},
 		item:     item,
 		height:   1,
 		leaf:     true,
-		bbox:     item.MBR,
+		bbox:     item.BBox(),
 	}
 }
 
 
 //MBR returns bbox property
 func (nd *node) BBox() *mbr.MBR {
-	return &nd.bbox
+	return nd.bbox
 }
 
 //GetItem from node
-func (nd *node) GetItem() *Obj {
+func (nd *node) GetItem() BoxObj {
 	return nd.item
 }
 
@@ -52,7 +52,7 @@ func (nd *node) addChild(child node) {
 }
 
 //Constructs children of node
-func makeChildren(items []*Obj) []node {
+func makeChildren(items []BoxObj) []node {
 	var chs = make([]node, 0, len(items))
 	for i := range items {
 		chs = append(chs, newLeafNode(items[i]))
