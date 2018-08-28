@@ -90,7 +90,7 @@ func BenchmarkRTree_Search_1000_01pct(b *testing.B) {
 func BenchmarkRTree_Build_And_Remove1000(b *testing.B) {
 	var tree = NewRTree(maxFill).LoadBoxes(BenchData)
 	for i := 0; i < 1000; i++ {
-		tree = tree.RemoveMBR(&BenchData[i])
+		tree = tree.Remove(&BenchData[i])
 	}
 	box = tree.Data.BBox()
 }

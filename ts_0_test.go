@@ -22,11 +22,10 @@ func (o Boxes) Swap(i, j int) {
 
 //Less sorts boxes lexicographically
 func (o Boxes) Less(i, j int) bool {
-	var x, y = 0, 1
-	var d = o[i][x] - o[j][x]
+	var d = o[i].MinX - o[j].MinX
 	//x's are close enough to each other
 	if feq(d, 0.0) {
-		d = o[i][y] - o[j][y]
+		d = o[i].MinY - o[j].MinY
 	}
 	//check if close enough ot zero
 	return d < 0
@@ -247,13 +246,13 @@ func TestRtreeRbush(t *testing.T) {
 		g.It("#remove removes items correctly", func() {
 			var tree = NewRTree(4).LoadBoxes(data)
 			var N = len(data)
-			tree.RemoveMBR(&data[0])
-			tree.RemoveMBR(&data[1])
-			tree.RemoveMBR(&data[2])
+			tree.Remove(&data[0])
+			tree.Remove(&data[1])
+			tree.Remove(&data[2])
 
-			tree.RemoveMBR(&data[N-1])
-			tree.RemoveMBR(&data[N-2])
-			tree.RemoveMBR(&data[N-3])
+			tree.Remove(&data[N-1])
+			tree.Remove(&data[N-2])
+			tree.Remove(&data[N-3])
 			var cloneData []*mbr.MBR
 			for i := 3; i < len(data)-3; i++ {
 				box := data[i].Clone()
@@ -270,7 +269,7 @@ func TestRtreeRbush(t *testing.T) {
 			var tree2 = NewRTree(0).LoadBoxes(data)
 			var query = mbr.CreateMBR(13, 13, 13, 13)
 			var querybox = mbr.CreateMBR(13, 13, 13, 13)
-			g.Assert(tree.Data).Eql(tree2.RemoveMBR(&query).Data)
+			g.Assert(tree.Data).Eql(tree2.Remove(&query).Data)
 			g.Assert(tree.Data).Eql(tree2.Remove(&querybox).Data)
 			g.Assert(tree.Data).Eql(tree2.Remove(item).Data)
 		})
@@ -292,7 +291,7 @@ func TestRtreeRbush(t *testing.T) {
 		g.It("should have chainable API", func() {
 			g.Assert(NewRTree(4).LoadBoxes(data).Insert(
 				&data[0],
-			).RemoveMBR(&data[0]).Clear().IsEmpty()).IsTrue()
+			).Remove(&data[0]).Clear().IsEmpty()).IsTrue()
 		})
 	})
 

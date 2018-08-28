@@ -101,50 +101,46 @@ func chooseSubtree(bbox *mbr.MBR, nd *node, level int, path []*node) (*node, []*
 
 //extend bounding box
 func extend(a, b *mbr.MBR) *mbr.MBR {
-	a[x1] = min(a[x1], b[x1])
-	a[y1] = min(a[y1], b[y1])
-	a[x2] = max(a[x2], b[x2])
-	a[y2] = max(a[y2], b[y2])
-	return a
+	return a.ExpandIncludeMBR(b)
 }
 
 //computes area of bounding box
 func bboxArea(a *mbr.MBR) float64 {
-	return (a[x2] - a[x1]) * (a[y2] - a[y1])
+	return a.Area()
 }
 
 //computes box margin
 func bboxMargin(a *mbr.MBR) float64 {
-	return (a[x2] - a[x1]) + (a[y2] - a[y1])
+	return (a.MaxX - a.MinX) + (a.MaxY - a.MinY)
 }
 
 //computes enlarged area given two mbrs
 func enlargedArea(a, b *mbr.MBR) float64 {
-	return (max(a[x2], b[x2]) - min(a[x1], b[x1])) * (max(a[y2], b[y2]) - min(a[y1], b[y1]))
+	return (max(a.MaxX, b.MaxX) - min(a.MinX, b.MinX)) * (max(a.MaxY, b.MaxY) - min(a.MinY, b.MinY))
 }
 
 //computes the intersection area of two mbrs
 func intersectionArea(a, b *mbr.MBR) float64 {
-	var minx, miny, maxx, maxy = a[x1], a[y1], a[x2], a[y2]
+	var minx, miny, maxx, maxy = a.MinX, a.MinY, a.MaxX, a.MaxY
 
 	if !intersects(a, b) {
 		return 0.0
 	}
 
-	if b[x1] > minx {
-		minx = b[x1]
+	if b.MinX > minx {
+		minx = b.MinX
 	}
 
-	if b[y1] > miny {
-		miny = b[y1]
+	if b.MinY > miny {
+		miny = b.MinY
 	}
 
-	if b[x2] < maxx {
-		maxx = b[x2]
+	if b.MaxX < maxx {
+		maxx = b.MaxX
 	}
 
-	if b[y2] < maxy {
-		maxy = b[y2]
+	if b.MaxY < maxy {
+		maxy = b.MaxY
 	}
 
 	return (maxx - minx) * (maxy - miny)
@@ -152,16 +148,18 @@ func intersectionArea(a, b *mbr.MBR) float64 {
 
 //contains tests whether a contains b
 func contains(a, b *mbr.MBR) bool {
-	return (b[x1] >= a[x1] &&
-		b[x2] <= a[x2] &&
-		b[y1] >= a[y1] &&
-		b[y2] <= a[y2])
+	return (
+		b.MinX >= a.MinX &&
+		b.MaxX <= a.MaxX &&
+		b.MinY >= a.MinY &&
+		b.MaxY <= a.MaxY)
 }
 
 //intersects tests a intersect b (MBR)
 func intersects(a, b *mbr.MBR) bool {
-	return !(b[x1] > a[x2] ||
-		b[x2] < a[x1] ||
-		b[y1] > a[y2] ||
-		b[y2] < a[y1])
+	return !(
+		b.MinX > a.MaxX ||
+		b.MaxX < a.MinX ||
+		b.MinY > a.MaxY ||
+		b.MaxY < a.MinY)
 }

@@ -10,8 +10,8 @@ var feq =  math.FloatEqual
 type SortBy int
 
 const (
-	ByX SortBy = iota
-	ByY
+	byX SortBy = iota
+	byY
 )
 
 const (
@@ -36,12 +36,12 @@ func minEntries(x int) int {
 
 //compareNodeMinX computes change in minimum x
 func compareNodeMinX(a, b BoxObj) float64 {
-	return a.BBox()[x1] - b.BBox()[x1]
+	return a.BBox().MinX - b.BBox().MinX
 }
 
 //compareNodeMinY computes change in minimum y
 func compareNodeMinY(a, b BoxObj) float64 {
-	return a.BBox()[y1] - b.BBox()[y1]
+	return a.BBox().MinY - b.BBox().MinY
 }
 
 func swapItem(arr []BoxObj, i, j int) {

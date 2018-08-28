@@ -72,8 +72,8 @@ func (tree *RTree) chooseSplitIndex(nd *node, m, M int) int {
 //_chooseSplitAxis selects split axis : sorts node children
 //by the best axis for split.
 func (tree *RTree) chooseSplitAxis(nd *node, m, M int) {
-	var xMargin = tree.allDistMargin(nd, m, M, ByX)
-	var yMargin = tree.allDistMargin(nd, m, M, ByY)
+	var xMargin = tree.allDistMargin(nd, m, M, byX)
+	var yMargin = tree.allDistMargin(nd, m, M, byY)
 
 	// if total distributions margin value is minimal for x, sort by minX,
 	// otherwise it's already sorted by minY

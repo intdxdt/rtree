@@ -5,6 +5,7 @@ import (
 	"github.com/intdxdt/math"
 )
 
+//Node at index from slice of pointers , nil if not found
 func nodeAtIndex(a []*node, i int) *node {
 	var n = len(a)
 	if i > n-1 || i < 0 || n == 0 {
@@ -13,7 +14,8 @@ func nodeAtIndex(a []*node, i int) *node {
 	return a[i]
 }
 
-func nodeSiblingAtIndex(a []node, i int) *node {
+//Node at index from slice of nodes , nil if not found
+func nodeAtIndex_(a []node, i int) *node {
 	var n = len(a)
 	if i > n-1 || i < 0 || n == 0 {
 		return nil
@@ -21,6 +23,7 @@ func nodeSiblingAtIndex(a []node, i int) *node {
 	return &a[i]
 }
 
+//Pop node
 func popNode(a []*node) (*node, []*node) {
 	var v *node
 	var n int
@@ -30,6 +33,22 @@ func popNode(a []*node) (*node, []*node) {
 	n = len(a) - 1
 	v, a[n] = a[n], nil
 	return v, a[:n]
+}
+
+//Remove node at given index from node slice.
+func removeNode(a []node, i int) []node {
+	var n = len(a) - 1
+	if i > n {
+		return a
+	}
+	//a, a[n] = append(a[:i], a[i+1:]...), nil //panics in gopherjs
+	var b = make([]node, 0, math.MaxInt(n-i, 0))
+	if i < n {
+		b = append(b, a[i+1:]...)
+	}
+	a[n] = node{}
+	a = append(a[:i], b...)
+	return a
 }
 
 func popIndex(indxs *[]int) int {
@@ -45,33 +64,6 @@ func popIndex(indxs *[]int) int {
 	return v
 }
 
-//remove node at given index from node slice.
-//func removeNode(a []node, i int) []node {
-//	var n = len(a) - 1
-//	if i > n {
-//		return a
-//	}
-//	a, a[n] = append(a[:i], a[i+1:]...), node{}
-//	return a
-//}
-
-//remove node at given index from node slice.
-func removeNode(a []node, i int) []node {
-	var n = len(a) - 1
-	if i > n {
-		return a
-	}
-
-	//a, a[n] = append(a[:i], a[i+1:]...), nil //panics in gopherjs
-	var b = make([]node, 0, math.MaxInt(n-i, 0))
-	if i < n {
-		b = append(b, a[i+1:]...)
-	}
-	a[n] = node{}
-	a = append(a[:i], b...)
-	return a
-}
-
 //condense node and its path from the root
 func (tree *RTree) condense(path []*node) {
 	var parent *node
@@ -82,15 +74,14 @@ func (tree *RTree) condense(path []*node) {
 			//go through the path, removing empty nodes and updating bboxes
 			if i > 0 {
 				parent = path[i-1]
-				index := sliceIndex(len(parent.children), func(s int) bool {
+				var index = sliceIndex(len(parent.children), func(s int) bool {
 					return path[i] == &parent.children[s]
 				})
 				if index != -1 {
 					parent.children = removeNode(parent.children, index)
 				}
 			} else {
-				//root is empty, rest root
-				tree.Clear()
+				tree.Clear() //root is empty, rest root
 			}
 		} else {
 			calcBBox(path[i])
@@ -100,8 +91,6 @@ func (tree *RTree) condense(path []*node) {
 }
 
 //Remove Item from RTree
-//NOTE:if item is a bbox , then first found bbox is removed
-
 func (tree *RTree) Remove(item BoxObj) *RTree {
 	if (item == nil) {
 		return tree
@@ -115,20 +104,20 @@ func (tree *RTree) Remove(item BoxObj) *RTree {
 
 //Remove Item from RTree
 //NOTE:if item is a bbox , then first found bbox is removed
-func (tree *RTree) RemoveMBR(item *mbr.MBR) *RTree {
-	tree.removeItem(item,
-		func(nd *node, i int) bool {
-			return nd.children[i].bbox.Equals(item)
-		})
-	return tree
-}
+//func (tree *RTree) Remove(item *mbr.MBR) *RTree {
+//	tree.removeItem(item,
+//		func(nd *node, i int) bool {
+//			return nd.children[i].bbox.Equals(item)
+//		})
+//	return tree
+//}
 
 func (tree *RTree) removeItem(item *mbr.MBR, predicate func(*node, int) bool) *RTree {
 	var nd = &tree.Data
 	var parent *node
 	var bbox = item.BBox()
-	var path = make([]*node, 0)
-	var indexes = make([]int, 0)
+	var path []*node
+	var indexes []int
 	var i, index int
 	var goingUp bool
 
@@ -170,7 +159,7 @@ func (tree *RTree) removeItem(item *mbr.MBR, predicate func(*node, int) bool) *R
 		} else if parent != nil {
 			// go right
 			i++
-			nd = nodeSiblingAtIndex(parent.children, i)
+			nd = nodeAtIndex_(parent.children, i)
 			goingUp = false
 		} else {
 			nd = nil
