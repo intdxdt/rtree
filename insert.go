@@ -164,18 +164,10 @@ func intersectionArea(a, b *mbr.MBR) float64 {
 
 //contains tests whether a contains b
 func contains(a, b *mbr.MBR) bool {
-	return (
-		b.MinX >= a.MinX &&
-			b.MaxX <= a.MaxX &&
-			b.MinY >= a.MinY &&
-			b.MaxY <= a.MaxY)
+	return b.MinX >= a.MinX && b.MaxX <= a.MaxX && b.MinY >= a.MinY && b.MaxY <= a.MaxY
 }
 
 //intersects tests a intersect b (MBR)
 func intersects(a, b *mbr.MBR) bool {
-	return !(
-		b.MinX > a.MaxX ||
-			b.MaxX < a.MinX ||
-			b.MinY > a.MaxY ||
-			b.MaxY < a.MinY)
+	return !(b.MinX > a.MaxX || b.MaxX < a.MinX || b.MinY > a.MaxY || b.MaxY < a.MinY)
 }
