@@ -91,7 +91,7 @@ func (tree *RTree) condense(path []*node) {
 }
 
 //Remove Item from RTree
-func (tree *RTree) Remove(item BoxObj) *RTree {
+func (tree *RTree) Remove(item BoxObject) *RTree {
 	if (item == nil) {
 		return tree
 	}

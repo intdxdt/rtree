@@ -61,7 +61,7 @@ func TestRtree(t *testing.T) {
 		pth = append(pth, b)
 
 		var n = createNode(item, 1, false, pth)
-		var items = make([]BoxObj, 0, 10)
+		var items = make([]BoxObject, 0, 10)
 		var nodes = make(NodePath, 0, 0)
 
 		items = append(items, item)
@@ -129,7 +129,7 @@ func TestRtree(t *testing.T) {
 
 			//bulkload
 			var dataBulkload = data[:length:length]
-			var bulkItems = make([]BoxObj, len(dataBulkload))
+			var bulkItems = make([]BoxObject, len(dataBulkload))
 			for i := range bulkItems {
 				bulkItems[i] = &dataBulkload[i]
 			}
@@ -209,7 +209,7 @@ func TestRtree(t *testing.T) {
 		var length = len(data)
 		var dataOnebyone = data[:length:length]
 		var dataBulkload = data[:length:length]
-		var bulkItems = make([]BoxObj, len(dataBulkload))
+		var bulkItems = make([]BoxObject, len(dataBulkload))
 
 		for i := range bulkItems {
 			bulkItems[i] = &dataBulkload[i]

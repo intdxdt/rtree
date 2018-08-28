@@ -6,7 +6,7 @@ import (
 
 //LoadBoxes loads bounding boxes
 func (tree *RTree) LoadBoxes(data []mbr.MBR) *RTree {
-	var items = make([]BoxObj, 0, len(data))
+	var items = make([]BoxObject, 0, len(data))
 	for i := range data {
 		items = append(items,  &data[i])
 	}
@@ -14,7 +14,7 @@ func (tree *RTree) LoadBoxes(data []mbr.MBR) *RTree {
 }
 
 //Load implements bulk loading
-func (tree *RTree) Load(items []BoxObj) *RTree {
+func (tree *RTree) Load(items []BoxObject) *RTree {
 	var n  = len(items)
 	if n < tree.minEntries {
 		for i := range items {
@@ -23,7 +23,7 @@ func (tree *RTree) Load(items []BoxObj) *RTree {
 		return tree
 	}
 
-	var data = make([]BoxObj, 0, n)
+	var data = make([]BoxObject, 0, n)
 	for i := range items {
 		data = append(data, items[i])
 	}

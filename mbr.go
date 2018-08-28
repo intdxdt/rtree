@@ -14,7 +14,7 @@ func calcBBox(nd *node) {
 func distBBox(nd *node, k, p int) mbr.MBR {
 	var bbox = emptyMBR()
 	for i := k; i < p; i++ {
-		extend(&bbox, &nd.children[i].bbox)
+		bbox.ExpandIncludeMBR(&nd.children[i].bbox)
 	}
 	return bbox
 }
@@ -24,24 +24,22 @@ func distBBox(nd *node, k, p int) mbr.MBR {
 func (tree *RTree) allDistMargin(nd *node, m, M int, sortBy SortBy) float64 {
 	if sortBy == byX {
 		sort.Sort(XNodePath{nd.children})
-		//bubbleAxis(*node.getChildren(), byX, byY)
 	} else if sortBy == byY {
 		sort.Sort(YNodePath{nd.children})
-		//bubbleAxis(*node.getChildren(), byY, byX)
 	}
 
 	var i int
-	var leftBBox  = distBBox(nd, 0, m)
+	var leftBBox = distBBox(nd, 0, m)
 	var rightBBox = distBBox(nd, M-m, M)
 	var margin = bboxMargin(&leftBBox) + bboxMargin(&rightBBox)
 
 	for i = m; i < M-m; i++ {
-		extend(&leftBBox, &nd.children[i].bbox)
+		leftBBox.ExpandIncludeMBR(&nd.children[i].bbox)
 		margin += bboxMargin(&leftBBox)
 	}
 
 	for i = M - m - 1; i >= m; i-- {
-		extend(&rightBBox, &nd.children[i].bbox)
+		rightBBox.ExpandIncludeMBR(&nd.children[i].bbox)
 		margin += bboxMargin(&rightBBox)
 	}
 	return margin

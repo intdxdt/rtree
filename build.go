@@ -3,7 +3,7 @@ package rtree
 import "math"
 
 //build
-func (tree *RTree) buildTree(items []BoxObj, left, right, height int) node {
+func (tree *RTree) buildTree(items []BoxObject, left, right, height int) node {
 	var N = float64(right - left + 1)
 	var M = float64(tree.maxEntries)
 	//var n *node
@@ -36,11 +36,11 @@ func (tree *RTree) buildTree(items []BoxObj, left, right, height int) node {
 	var N1 = N2 * int(math.Ceil(math.Sqrt(M)))
 	var i, j, right2, right3 int
 
-	multiSelect(items, left, right, N1, compareNodeMinX)
+	multiSelect(items, left, right, N1, compareMinX)
 
 	for i = left; i <= right; i += N1 {
 		right2 = minInt(i+N1-1, right)
-		multiSelect(items, i, right2, N2, compareNodeMinY)
+		multiSelect(items, i, right2, N2, compareMinY)
 
 		for j = i; j <= right2; j += N2 {
 			right3 = minInt(j+N2-1, right2)

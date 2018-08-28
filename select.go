@@ -5,10 +5,9 @@ import "math"
 // sort an array so that items come in groups of n unsorted items,
 // with groups sorted between each other and
 // combines selection algorithm with binary divide & conquer approach.
-func multiSelect(arr []BoxObj, left, right, n int, compare compareNode) {
+func multiSelect(arr []BoxObject, left, right, n int, compare compareObject) {
 	var mid int
-	var stack = make([]int, 2)
-	stack[0], stack[1] = left, right
+	var stack =[]int{left, right}
 
 	for len(stack) > 0 {
 		right, stack = popInt(stack)
@@ -19,34 +18,35 @@ func multiSelect(arr []BoxObj, left, right, n int, compare compareNode) {
 		}
 
 		mid = left + int(math.Ceil(float64(right-left)/float64(n)/2.0))*n
-		selectBox(arr, left, right, mid, compare)
+		selectBox(arr, mid, left, right,  compare)
 		stack = appendInts(stack, left, mid, mid, right)
 	}
 }
 
-// sort array between left and right (inclusive) so that the smallest k elements come first (unordered)
-func selectBox(arr []BoxObj, left, right, k int, compare compareNode) {
+// sort array between left and right (inclusive)
+// so that the smallest k elements come first (unordered)
+func selectBox(arr []BoxObject, k , left, right int, compare compareObject) {
 	var i, j int
-	var fn, fi, fNewLeft, fNewRight, fsn, fz, fs, fsd float64
-	var fLeft, fRight, fk = float64(left), float64(right), float64(k)
-	var t BoxObj
+	var newLeft, newRight int
+	var fn, fi,  fsn, fz, fs, fsd float64
+	var fleft, fright, fk = float64(left), float64(right), float64(k)
+	var t BoxObject
 
 	for right > left {
-		//the arbitrary constants 600 and 0.5 are used in the original
-		// version to minimize execution time
 		if right-left > 600 {
-			fn = fRight - fLeft + 1.0
-			fi = fk - fLeft + 1.0
+			fn = fright - fleft + 1
+			fi = fk - fleft + 1
 			fz = math.Log(fn)
+
 			fs = 0.5 * math.Exp(2*fz/3.0)
-			fsn = 1.0
+			fsn = 1
 			if (fi - fn/2) < 0 {
-				fsn = -1.0
+				fsn = -1
 			}
-			fsd = 0.5 * math.Sqrt(fz*fs*(fn-fs)/fn) * (fsn)
-			fNewLeft = max(fLeft, math.Floor(fk-fi*fs/fn+fsd))
-			fNewRight = min(fRight, math.Floor(fk+(fn-fi)*fs/fn+fsd))
-			selectBox(arr, int(fNewLeft), int(fNewRight), int(fk), compare)
+			fsd = 0.5 * math.Sqrt(fz*fs*(fn-fs)/fn) * fsn
+			newLeft  = int(max(fleft, math.Floor(fk-fi*fs/fn+fsd)))
+			newRight = int(min(fright, math.Floor(fk+(fn-fi)*fs/fn+fsd)))
+			selectBox(arr, k,  newLeft, newRight, compare)
 		}
 
 		t = arr[k]

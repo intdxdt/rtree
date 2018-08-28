@@ -6,6 +6,7 @@ import (
 	"github.com/intdxdt/mbr"
 	"github.com/franela/goblin"
 	"time"
+	"github.com/intdxdt/math"
 )
 
 type Boxes []*mbr.MBR
@@ -23,11 +24,9 @@ func (o Boxes) Swap(i, j int) {
 //Less sorts boxes lexicographically
 func (o Boxes) Less(i, j int) bool {
 	var d = o[i].MinX - o[j].MinX
-	//x's are close enough to each other
-	if feq(d, 0.0) {
+	if d == 0 || math.Abs(d) < math.EPSILON  {
 		d = o[i].MinY - o[j].MinY
 	}
-	//check if close enough ot zero
 	return d < 0
 }
 
@@ -39,7 +38,7 @@ func someData(n int) []mbr.MBR {
 	return data
 }
 
-func testResults(g *goblin.G, objects []BoxObj, boxes Boxes) {
+func testResults(g *goblin.G, objects []BoxObject, boxes Boxes) {
 	var results = make([]*mbr.MBR, 0, len(objects))
 	for i := range objects {
 		results = append(results, objects[i].BBox())
@@ -53,8 +52,8 @@ func testResults(g *goblin.G, objects []BoxObj, boxes Boxes) {
 	}
 }
 
-func getObjs(nodes []node) []BoxObj {
-	var objs = make([]BoxObj, 0, len(nodes))
+func getObjs(nodes []node) []BoxObject {
+	var objs = make([]BoxObject, 0, len(nodes))
 	for _, o := range nodes {
 		objs = append(objs, o.item)
 	}
@@ -118,7 +117,7 @@ func TestRtreeRbush(t *testing.T) {
 		})
 
 		g.It("#load does nothing if loading empty data", func() {
-			var tree = NewRTree(0).Load(make([]BoxObj, 0))
+			var tree = NewRTree(0).Load(make([]BoxObject, 0))
 			g.Assert(tree.IsEmpty()).IsTrue()
 		})
 
@@ -221,7 +220,7 @@ func TestRtreeRbush(t *testing.T) {
 		})
 
 		g.It("#insert does nothing if given nil", func() {
-			var o BoxObj
+			var o BoxObject
 			var tree = NewRTree(4).LoadBoxes(data)
 			g.Assert(tree.Data).Eql(NewRTree(4).LoadBoxes(data).Insert(o).Data)
 		})
@@ -264,7 +263,7 @@ func TestRtreeRbush(t *testing.T) {
 		})
 
 		g.It("#remove does nothing if nothing found", func() {
-			var item BoxObj
+			var item BoxObject
 			var tree = NewRTree(0).LoadBoxes(data)
 			var tree2 = NewRTree(0).LoadBoxes(data)
 			var query = mbr.CreateMBR(13, 13, 13, 13)

@@ -60,7 +60,7 @@ func Benchmark_Insert_Load_SmallBigData(b *testing.B) {
 
 func BenchmarkRTree_Search_1000_10pct(b *testing.B) {
 	var found = 0
-	var items []BoxObj
+	var items []BoxObject
 	for i := 0; i < 1000; i++ {
 		items = tree.Search(bboxes100[i])
 		found += len(items)
@@ -69,7 +69,7 @@ func BenchmarkRTree_Search_1000_10pct(b *testing.B) {
 }
 func BenchmarkRTree_Search_1000_1pct(b *testing.B) {
 	var found = 0
-	var items []BoxObj
+	var items []BoxObject
 	for i := 0; i < 1000; i++ {
 		items = tree.Search(bboxes10[i])
 		found += len(items)
@@ -79,7 +79,7 @@ func BenchmarkRTree_Search_1000_1pct(b *testing.B) {
 
 func BenchmarkRTree_Search_1000_01pct(b *testing.B) {
 	var found = 0
-	var items []BoxObj
+	var items []BoxObject
 	for i := 0; i < 1000; i++ {
 		items = tree.Search(bboxes1[i])
 		found += len(items)

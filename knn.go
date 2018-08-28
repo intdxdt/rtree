@@ -11,7 +11,7 @@ func predicate(_ *KObj) (bool, bool) {
 
 func (tree *RTree) Knn(
 	query mbr.MBR, limit int, score func(*mbr.MBR, *KObj) float64,
-	predicates ...func(*KObj) (bool, bool)) []BoxObj {
+	predicates ...func(*KObj) (bool, bool)) []BoxObject {
 
 	var predFn = predicate
 	if len(predicates) > 0 {
@@ -19,7 +19,7 @@ func (tree *RTree) Knn(
 	}
 
 	var nd = &tree.Data
-	var result []BoxObj
+	var result []BoxObject
 	var child *node
 	var stop, pred bool
 	var queue = heap.NewHeap(kobjCmp, heap.NewHeapType().AsMin())

@@ -7,14 +7,14 @@ import (
 //Node type for internal rtree node
 type node struct {
 	children []node
-	item     BoxObj
+	item     BoxObject
 	height   int
 	leaf     bool
 	bbox     mbr.MBR
 }
 
 //Creates a node
-func createNode(item BoxObj, height int, leaf bool, children []node) node {
+func createNode(item BoxObject, height int, leaf bool, children []node) node {
 	return node{
 		children: children,
 		item:     item,
@@ -25,7 +25,7 @@ func createNode(item BoxObj, height int, leaf bool, children []node) node {
 }
 
 //node type for internal node
-func newLeafNode(item BoxObj) node {
+func newLeafNode(item BoxObject) node {
 	return node{
 		children: []node{},
 		item:     item,
@@ -42,7 +42,7 @@ func (nd *node) BBox() *mbr.MBR {
 }
 
 //GetItem from node
-func (nd *node) GetItem() BoxObj {
+func (nd *node) GetItem() BoxObject {
 	return nd.item
 }
 
@@ -52,7 +52,7 @@ func (nd *node) addChild(child node) {
 }
 
 //Constructs children of node
-func makeChildren(items []BoxObj) []node {
+func makeChildren(items []BoxObject) []node {
 	var chs = make([]node, 0, len(items))
 	for i := range items {
 		chs = append(chs, newLeafNode(items[i]))
