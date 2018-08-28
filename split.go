@@ -78,6 +78,6 @@ func (tree *RTree) chooseSplitAxis(nd *node, m, M int) {
 	// if total distributions margin value is minimal for x, sort by minX,
 	// otherwise it's already sorted by minY
 	if xMargin < yMargin {
-		sort.Sort(&XNodePath{nd.children})
+		sort.Sort(&xNodePath{nd.children})
 	}
 }

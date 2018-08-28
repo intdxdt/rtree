@@ -23,9 +23,9 @@ func distBBox(nd *node, k, p int) mbr.MBR {
 //Each node is at least m full.
 func (tree *RTree) allDistMargin(nd *node, m, M int, sortBy SortBy) float64 {
 	if sortBy == byX {
-		sort.Sort(XNodePath{nd.children})
+		sort.Sort(xNodePath{nd.children})
 	} else if sortBy == byY {
-		sort.Sort(YNodePath{nd.children})
+		sort.Sort(yNodePath{nd.children})
 	}
 
 	var i int

@@ -27,7 +27,6 @@ func (tree *RTree) buildTree(items []BoxObject, left, right, height int) node {
 	}
 
 	// TODO eliminate recursion?
-
 	var n = createNode(createUniverse(), height, false, []node{})
 
 	// split the items into M mostly square tiles
@@ -36,11 +35,11 @@ func (tree *RTree) buildTree(items []BoxObject, left, right, height int) node {
 	var N1 = N2 * int(math.Ceil(math.Sqrt(M)))
 	var i, j, right2, right3 int
 
-	multiSelect(items, left, right, N1, compareMinX)
+	multiSelect(items, left, right, N1, cmpMinX)
 
 	for i = left; i <= right; i += N1 {
 		right2 = minInt(i+N1-1, right)
-		multiSelect(items, i, right2, N2, compareMinY)
+		multiSelect(items, i, right2, N2, cmpMinY)
 
 		for j = i; j <= right2; j += N2 {
 			right3 = minInt(j+N2-1, right2)

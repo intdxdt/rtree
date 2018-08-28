@@ -8,7 +8,10 @@ const (
 	byX SortBy = iota
 	byY
 )
-
+const (
+	cmpMinX = iota
+	cmpMinY
+)
 type SortBy int
 type compareObject func(BoxObject, BoxObject) float64
 type BoxObject interface {
@@ -24,16 +27,6 @@ func maxEntries(x int) int {
 
 func minEntries(x int) int {
 	return maxInt(2, int(math.Ceil(float64(x)*0.4)))
-}
-
-//compareMinX computes change in minimum x
-func compareMinX(a, b BoxObject) float64 {
-	return a.BBox().MinX - b.BBox().MinX
-}
-
-//compareMinY computes change in minimum y
-func compareMinY(a, b BoxObject) float64 {
-	return a.BBox().MinY - b.BBox().MinY
 }
 
 func swapItem(arr []BoxObject, i, j int) {

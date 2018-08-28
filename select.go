@@ -5,7 +5,7 @@ import "math"
 // sort an array so that items come in groups of n unsorted items,
 // with groups sorted between each other and
 // combines selection algorithm with binary divide & conquer approach.
-func multiSelect(arr []BoxObject, left, right, n int, compare compareObject) {
+func multiSelect(arr []BoxObject, left, right, n int, compare int) {
 	var mid int
 	var stack =[]int{left, right}
 
@@ -25,12 +25,12 @@ func multiSelect(arr []BoxObject, left, right, n int, compare compareObject) {
 
 // sort array between left and right (inclusive)
 // so that the smallest k elements come first (unordered)
-func selectBox(arr []BoxObject, k , left, right int, compare compareObject) {
+func selectBox(arr []BoxObject, k , left, right int, cmp int) {
 	var i, j int
 	var newLeft, newRight int
 	var fn, fi,  fsn, fz, fs, fsd float64
 	var fleft, fright, fk = float64(left), float64(right), float64(k)
-	var t BoxObject
+	var tMinX, tMinY float64
 
 	for right > left {
 		if right-left > 600 {
@@ -46,15 +46,16 @@ func selectBox(arr []BoxObject, k , left, right int, compare compareObject) {
 			fsd = 0.5 * math.Sqrt(fz*fs*(fn-fs)/fn) * fsn
 			newLeft  = int(max(fleft, math.Floor(fk-fi*fs/fn+fsd)))
 			newRight = int(min(fright, math.Floor(fk+(fn-fi)*fs/fn+fsd)))
-			selectBox(arr, k,  newLeft, newRight, compare)
+			selectBox(arr, k,  newLeft, newRight, cmp)
 		}
 
-		t = arr[k]
-		i = left
-		j = right
+		i, j = left, right
+		tMinX, tMinY = arr[k].BBox().MinX, arr[k].BBox().MinY
 
 		swapItem(arr, left, k)
-		if compare(arr[right], t) > 0 {
+
+		if  (cmp == cmpMinX && (arr[right].BBox().MinX-tMinX) > 0) ||
+			(cmp == cmpMinY && (arr[right].BBox().MinY-tMinY) > 0) {
 			swapItem(arr, left, right)
 		}
 
@@ -62,15 +63,19 @@ func selectBox(arr []BoxObject, k , left, right int, compare compareObject) {
 			swapItem(arr, i, j)
 			i++
 			j--
-			for compare(arr[i], t) < 0 {
+
+			for (cmp == cmpMinX && (arr[i].BBox().MinX-tMinX) < 0) ||
+				(cmp == cmpMinY && (arr[i].BBox().MinY-tMinY) < 0) {
 				i++
 			}
-			for compare(arr[j], t) > 0 {
+			for (cmp == cmpMinX && (arr[j].BBox().MinX-tMinX) > 0) ||
+				(cmp == cmpMinY && (arr[j].BBox().MinY-tMinY) > 0) {
 				j--
 			}
 		}
 
-		if compare(arr[left], t) == 0 {
+		if  (cmp == cmpMinX && (arr[left].BBox().MinX-tMinX) == 0) ||
+			(cmp == cmpMinY && (arr[left].BBox().MinY-tMinY) == 0) {
 			swapItem(arr, left, j)
 		} else {
 			j++
