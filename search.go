@@ -10,7 +10,7 @@ func (tree *RTree) Search(query mbr.MBR) []BoxObj {
 	var result []BoxObj
 	var nd = &tree.Data
 
-	if !intersects(bbox, nd.bbox) {
+	if !intersects(bbox, &nd.bbox) {
 		return []BoxObj{}
 	}
 
@@ -21,7 +21,7 @@ func (tree *RTree) Search(query mbr.MBR) []BoxObj {
 	for {
 		for i, length := 0, len(nd.children); i < length; i++ {
 			child = &nd.children[i]
-			childBBox = child.bbox
+			childBBox = &child.bbox
 
 			if intersects(bbox, childBBox) {
 				if nd.leaf {

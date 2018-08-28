@@ -54,13 +54,13 @@ func TestRtree(t *testing.T) {
 		var pt = &Pnt{0, 0}
 		var item = pt
 		var pth NodePath
-		var b = newNode(item, 0, true, nil)
+		var b = createNode(item, 0, true, nil)
 
 		pth = append(pth, b)
 		pth = append(pth, b)
 		pth = append(pth, b)
 
-		var n = newNode(item, 1, false, pth)
+		var n = createNode(item, 1, false, pth)
 		var items = make([]BoxObj, 0, 10)
 		var nodes = make(NodePath, 0, 0)
 
@@ -173,7 +173,7 @@ func TestRtree(t *testing.T) {
 		g.It("same root bounds for : bulkload & single insert ", func() {
 			var res = tree.Search(query)
 			for i := range res {
-				tree.RemoveObj(res[i])
+				tree.Remove(res[i])
 			}
 			g.Assert(tree.IsEmpty()).IsTrue()
 			g.Assert(len(tree.Data.children)).Equal(0)

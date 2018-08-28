@@ -9,8 +9,8 @@ func (tree *RTree) buildTree(items []BoxObj, left, right, height int) node {
 	//var n *node
 	if N <= M {
 		// reached leaf level return leaf
-		var n = newNode(
-			universe{}, 1, true,
+		var n = createNode(
+			createUniverse(), 1, true,
 			makeChildren(items[left:right+1:right+1]),
 		)
 		calcBBox(&n)
@@ -28,7 +28,7 @@ func (tree *RTree) buildTree(items []BoxObj, left, right, height int) node {
 
 	// TODO eliminate recursion?
 
-	var n = newNode(universe{}, height, false, []node{})
+	var n = createNode(createUniverse(), height, false, []node{})
 
 	// split the items into M mostly square tiles
 

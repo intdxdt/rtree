@@ -6,22 +6,25 @@ import (
 )
 
 //universe type with bounds [+inf +inf -inf -inf]
-type universe struct{}
+type universe struct{ bounds mbr.MBR }
 
 func (u universe) BBox() *mbr.MBR {
-	return emptyMBR()
+	return &u.bounds
 }
 
+func createUniverse() universe{
+	return universe{emptyMBR()}
+}
 
-func emptyMBR() *mbr.MBR {
-	return &mbr.MBR{
+func emptyMBR() mbr.MBR {
+	return mbr.MBR{
 		math.Inf(1), math.Inf(1),
 		math.Inf(-1), math.Inf(-1),
 	}
 }
 
 func (tree *RTree) Clear() *RTree {
-	tree.Data = newNode(universe{}, 1, true, []node{})
+	tree.Data = createNode(createUniverse(), 1, true, []node{})
 	return tree
 }
 

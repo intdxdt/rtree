@@ -271,17 +271,17 @@ func TestRtreeRbush(t *testing.T) {
 			var query = mbr.CreateMBR(13, 13, 13, 13)
 			var querybox = mbr.CreateMBR(13, 13, 13, 13)
 			g.Assert(tree.Data).Eql(tree2.RemoveMBR(&query).Data)
-			g.Assert(tree.Data).Eql(tree2.RemoveObj(&querybox).Data)
-			g.Assert(tree.Data).Eql(tree2.RemoveObj(item).Data)
+			g.Assert(tree.Data).Eql(tree2.Remove(&querybox).Data)
+			g.Assert(tree.Data).Eql(tree2.Remove(item).Data)
 		})
 
 		g.It("#remove brings the tree to a clear state when removing everything one by one", func() {
 			var tree = NewRTree(4).LoadBoxes(data)
 			var result = tree.Search(mbr.CreateMBR(0, 0, 100, 100))
 			for i := 0; i < len(result); i++ {
-				tree.RemoveObj(result[i])
+				tree.Remove(result[i])
 			}
-			g.Assert(tree.RemoveObj(nil).IsEmpty()).IsTrue()
+			g.Assert(tree.Remove(nil).IsEmpty()).IsTrue()
 		})
 
 		g.It("#clear should clear all the data in the tree", func() {
@@ -307,9 +307,9 @@ func TestRtreeUtil(t *testing.T) {
 	g.Describe("Rtree Util", func() {
 		g.It("tests pop nodes", func() {
 			g.Timeout(1 * time.Hour)
-			var a = newNode(universe{}, 0, true, nil)
-			var b = newNode(universe{}, 1, true, nil)
-			var c = newNode(universe{}, 1, true, nil)
+			var a = createNode(createUniverse(), 0, true, nil)
+			var b = createNode(createUniverse(), 1, true, nil)
+			var c = createNode(createUniverse(), 1, true, nil)
 			var nodes = make([]*node, 0)
 			var n *node
 

@@ -1,6 +1,9 @@
 package rtree
 
-import "github.com/intdxdt/mbr"
+import (
+	"github.com/intdxdt/mbr"
+	"github.com/intdxdt/math"
+)
 
 func nodeAtIndex(a []*node, i int) *node {
 	var n = len(a)
@@ -31,15 +34,26 @@ func popNode(a []*node) (*node, []*node) {
 
 func popIndex(indxs *[]int) int {
 	var n, v int
-	a := *indxs
+	var a = *indxs
 	n = len(a) - 1
 	if n < 0 {
 		return 0
 	}
-	v, a[n] = a[n], 0
+	v = a[n]
+	a[n] = 0
 	*indxs = a[:n]
 	return v
 }
+
+//remove node at given index from node slice.
+//func removeNode(a []node, i int) []node {
+//	var n = len(a) - 1
+//	if i > n {
+//		return a
+//	}
+//	a, a[n] = append(a[:i], a[i+1:]...), node{}
+//	return a
+//}
 
 //remove node at given index from node slice.
 func removeNode(a []node, i int) []node {
@@ -47,7 +61,14 @@ func removeNode(a []node, i int) []node {
 	if i > n {
 		return a
 	}
-	a, a[n] = append(a[:i], a[i+1:]...), node{}
+
+	//a, a[n] = append(a[:i], a[i+1:]...), nil //panics in gopherjs
+	var b = make([]node, 0, math.MaxInt(n-i, 0))
+	if i < n {
+		b = append(b, a[i+1:]...)
+	}
+	a[n] = node{}
+	a = append(a[:i], b...)
 	return a
 }
 
@@ -80,7 +101,8 @@ func (tree *RTree) condense(path []*node) {
 
 //Remove Item from RTree
 //NOTE:if item is a bbox , then first found bbox is removed
-func (tree *RTree) RemoveObj(item BoxObj) *RTree {
+
+func (tree *RTree) Remove(item BoxObj) *RTree {
 	if (item == nil) {
 		return tree
 	}
@@ -138,7 +160,7 @@ func (tree *RTree) removeItem(item *mbr.MBR, predicate func(*node, int) bool) *R
 			}
 		}
 
-		if !goingUp && !nd.leaf && contains(nd.bbox, bbox) {
+		if !goingUp && !nd.leaf && contains(&nd.bbox, bbox) {
 			// go down
 			path = append(path, nd)
 			indexes = append(indexes, i)

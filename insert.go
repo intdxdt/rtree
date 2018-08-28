@@ -23,7 +23,7 @@ func (tree *RTree) insert(item BoxObj, level int) {
 
 	// put the item into the node item_bbox
 	nd.addChild(newLeafNode(item))
-	extend(nd.bbox, item.BBox())
+	extend(&nd.bbox, item.BBox())
 
 	// split on node overflow propagate upwards if necessary
 	level, insertPath = tree.splitOnOverflow(level, insertPath)
@@ -38,16 +38,16 @@ func (tree *RTree) insertNode(item node, level int) {
 	var insertPath []*node
 
 	// find the best node for accommodating the item, saving all nodes along the path too
-	nd, insertPath = chooseSubtree(item.bbox, &tree.Data, level, insertPath)
+	nd, insertPath = chooseSubtree(&item.bbox, &tree.Data, level, insertPath)
 
 	nd.children = append(nd.children, item)
-	extend(nd.bbox, item.bbox)
+	extend(&nd.bbox, &item.bbox)
 
 	// split on node overflow propagate upwards if necessary
 	level, insertPath = tree.splitOnOverflow(level, insertPath)
 
 	// adjust bboxes along the insertion path
-	tree.adjustParentBBoxes(item.bbox, insertPath, level)
+	tree.adjustParentBBoxes(&item.bbox, insertPath, level)
 }
 
 // split on node overflow propagate upwards if necessary
@@ -74,8 +74,8 @@ func chooseSubtree(bbox *mbr.MBR, nd *node, level int, path []*node) (*node, []*
 
 		for i, length := 0, len(nd.children); i < length; i++ {
 			child = &nd.children[i]
-			area = bboxArea(child.bbox)
-			enlargement = enlargedArea(bbox, child.bbox) - area
+			area = bboxArea(&child.bbox)
+			enlargement = enlargedArea(bbox, &child.bbox) - area
 
 			// choose entry with the least area enlargement
 			if enlargement < minEnlargement {

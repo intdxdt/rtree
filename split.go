@@ -8,7 +8,7 @@ import (
 // _split overflowed node into two
 func (tree *RTree) split(insertPath []*node, level int) {
 	var nd = insertPath[level]
-	var newNode = newNode(universe{}, nd.height, nd.leaf, []node{})
+	var newNode = createNode(createUniverse(), nd.height, nd.leaf, []node{})
 	var M = len(nd.children)
 	var m = tree.minEntries
 
@@ -30,7 +30,7 @@ func (tree *RTree) split(insertPath []*node, level int) {
 //_splitRoot splits the root of tree.
 func (tree *RTree) splitRoot(nd, other node) {
 	// split root node
-	tree.Data = newNode(universe{}, nd.height+1, false, []node{nd, other})
+	tree.Data = createNode(createUniverse(), nd.height+1, false, []node{nd, other})
 	calcBBox(&tree.Data)
 }
 
@@ -45,8 +45,8 @@ func (tree *RTree) chooseSplitIndex(nd *node, m, M int) int {
 		var bbox1 = distBBox(nd, 0, i)
 		var bbox2 = distBBox(nd, i, M)
 
-		overlap = intersectionArea(bbox1, bbox2)
-		area = bboxArea(bbox1) + bboxArea(bbox2)
+		overlap = intersectionArea(&bbox1, &bbox2)
+		area = bboxArea(&bbox1) + bboxArea(&bbox2)
 
 		// choose distribution with minimum overlap
 		if overlap < minOverlap {
