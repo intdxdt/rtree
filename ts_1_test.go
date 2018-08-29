@@ -53,7 +53,7 @@ func TestRtree(t *testing.T) {
 	g.Describe("rtree : node, leaf, inode", func() {
 		var pt = &Pnt{0, 0}
 		var item = pt
-		var pth NodePath
+		var pth nodePath
 		var b = createNode(item, 0, true, nil)
 
 		pth = append(pth, b)
@@ -62,7 +62,7 @@ func TestRtree(t *testing.T) {
 
 		var n = createNode(item, 1, false, pth)
 		var items = make([]BoxObject, 0, 10)
-		var nodes = make(NodePath, 0, 0)
+		var nodes = make(nodePath, 0, 0)
 
 		items = append(items, item)
 		nodes = append(nodes, b)

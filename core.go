@@ -4,16 +4,17 @@ import (
 	"github.com/intdxdt/math"
 	"github.com/intdxdt/mbr"
 )
+
 const (
-	byX SortBy = iota
+	byX sortBy = iota
 	byY
 )
 const (
 	cmpMinX = iota
 	cmpMinY
 )
-type SortBy int
-type compareObject func(BoxObject, BoxObject) float64
+
+type sortBy int
 type BoxObject interface {
     BBox() *mbr.MBR
 }
