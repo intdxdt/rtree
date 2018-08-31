@@ -305,9 +305,9 @@ func TestRtreeUtil(t *testing.T) {
 	g.Describe("Rtree Util", func() {
 		g.It("tests pop nodes", func() {
 			g.Timeout(1 * time.Hour)
-			var a = createNode(createUniverse(), 0, true, nil)
-			var b = createNode(createUniverse(), 1, true, nil)
-			var c = createNode(createUniverse(), 1, true, nil)
+			var a = createNode(nil, 0, true, nil)
+			var b = createNode(nil, 1, true, nil)
+			var c = createNode(nil, 1, true, nil)
 			var nodes = make([]*node, 0)
 			var n *node
 

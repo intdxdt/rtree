@@ -5,16 +5,7 @@ import (
 	"github.com/intdxdt/mbr"
 )
 
-//universe type with bounds [+inf +inf -inf -inf]
-type universe struct{ bounds mbr.MBR }
 
-func (u universe) BBox() *mbr.MBR {
-	return &u.bounds
-}
-
-func createUniverse() universe{
-	return universe{emptyMBR()}
-}
 
 func emptyMBR() mbr.MBR {
 	return mbr.MBR{
@@ -24,7 +15,7 @@ func emptyMBR() mbr.MBR {
 }
 
 func (tree *RTree) Clear() *RTree {
-	tree.Data = createNode(createUniverse(), 1, true, []node{})
+	tree.Data = createNode(nil, 1, true, []node{})
 	return tree
 }
 

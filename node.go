@@ -15,12 +15,18 @@ type node struct {
 
 //Creates a node
 func createNode(item BoxObject, height int, leaf bool, children []node) node {
+	var box mbr.MBR
+	if item == nil {
+		box = emptyMBR()
+	} else {
+		box = item.BBox().Clone()
+	}
 	return node{
 		children: children,
 		item:     item,
 		height:   height,
 		leaf:     leaf,
-		bbox:     item.BBox().Clone(),
+		bbox:     box,
 	}
 }
 
@@ -34,7 +40,6 @@ func newLeafNode(item BoxObject) node {
 		bbox:     item.BBox().Clone(),
 	}
 }
-
 
 //MBR returns bbox property
 func (nd *node) BBox() *mbr.MBR {

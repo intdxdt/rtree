@@ -8,7 +8,7 @@ import (
 // _split overflowed node into two
 func (tree *RTree) split(insertPath []*node, level int) {
 	var nd = insertPath[level]
-	var newNode = createNode(createUniverse(), nd.height, nd.leaf, []node{})
+	var newNode = createNode(nil, nd.height, nd.leaf, []node{})
 	var M = len(nd.children)
 	var m = tree.minEntries
 
@@ -30,7 +30,7 @@ func (tree *RTree) split(insertPath []*node, level int) {
 //_splitRoot splits the root of tree.
 func (tree *RTree) splitRoot(nd, other node) {
 	// split root node
-	tree.Data = createNode(createUniverse(), nd.height+1, false, []node{nd, other})
+	tree.Data = createNode(nil, nd.height+1, false, []node{nd, other})
 	calcBBox(&tree.Data)
 }
 
