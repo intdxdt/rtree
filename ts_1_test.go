@@ -1,9 +1,9 @@
 package rtree
 
 import (
-	"testing"
-	"github.com/intdxdt/mbr"
 	"github.com/franela/goblin"
+	"github.com/intdxdt/mbr"
+	"testing"
 	"time"
 )
 

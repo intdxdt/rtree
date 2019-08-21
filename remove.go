@@ -1,8 +1,8 @@
 package rtree
 
 import (
-	"github.com/intdxdt/mbr"
 	"github.com/intdxdt/math"
+	"github.com/intdxdt/mbr"
 )
 
 //Node at index from slice of pointers , nil if not found

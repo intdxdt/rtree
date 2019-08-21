@@ -1,8 +1,8 @@
 package rtree
 
 import (
-	"sort"
 	"github.com/intdxdt/mbr"
+	"sort"
 )
 
 //calcBBox calculates its bbox from bboxes of its children.

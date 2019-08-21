@@ -2,8 +2,8 @@ package rtree
 
 import (
 	"fmt"
-	"github.com/intdxdt/mbr"
 	"github.com/intdxdt/math"
+	"github.com/intdxdt/mbr"
 )
 
 //KObj instance struct

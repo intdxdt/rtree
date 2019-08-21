@@ -1,8 +1,8 @@
 package rtree
 
 import (
-	"github.com/intdxdt/mbr"
 	"github.com/intdxdt/math"
+	"github.com/intdxdt/mbr"
 )
 
 //Insert item

@@ -1,11 +1,9 @@
 package rtree
 
 import (
-	"math"
 	"github.com/intdxdt/mbr"
+	"math"
 )
-
-
 
 func emptyMBR() mbr.MBR {
 	return mbr.MBR{

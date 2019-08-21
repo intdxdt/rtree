@@ -1,11 +1,11 @@
 package rtree
 
 import (
-	"time"
-	"math"
-	"testing"
-	"math/rand"
 	"github.com/intdxdt/mbr"
+	"math"
+	"math/rand"
+	"testing"
+	"time"
 )
 
 func RandBox(size float64, rnd *rand.Rand) mbr.MBR {
@@ -67,6 +67,7 @@ func BenchmarkRTree_Search_1000_10pct(b *testing.B) {
 	}
 	foundTotal = found
 }
+
 func BenchmarkRTree_Search_1000_1pct(b *testing.B) {
 	var found = 0
 	var items []BoxObject

@@ -1,12 +1,12 @@
 package rtree
 
 import (
+	"github.com/franela/goblin"
+	"github.com/intdxdt/math"
+	"github.com/intdxdt/mbr"
 	"sort"
 	"testing"
-	"github.com/intdxdt/mbr"
-	"github.com/franela/goblin"
 	"time"
-	"github.com/intdxdt/math"
 )
 
 type Boxes []*mbr.MBR
@@ -24,7 +24,7 @@ func (o Boxes) Swap(i, j int) {
 //Less sorts boxes lexicographically
 func (o Boxes) Less(i, j int) bool {
 	var d = o[i].MinX - o[j].MinX
-	if d == 0 || math.Abs(d) < math.EPSILON  {
+	if d == 0 || math.Abs(d) < math.EPSILON {
 		d = o[i].MinY - o[j].MinY
 	}
 	return d < 0
@@ -299,7 +299,7 @@ func TestRtreeRbush(t *testing.T) {
 /*
 	g := goblin.Goblin(t)
 	g.Describe("Rtree Tests - From Rbush", func() {
- */
+*/
 func TestRtreeUtil(t *testing.T) {
 	g := goblin.Goblin(t)
 	g.Describe("Rtree Util", func() {
