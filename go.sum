@@ -1,0 +1,15 @@
+github.com/franela/goblin v0.0.0-20200404164657-567a4070c437/go.mod h1:VzmDKDJVZI3aJmnRI9VjAn9nJ8qPPsN1fqzr9dqInIo=
+github.com/franela/goblin v0.0.0-20200409142057-1def193310bb h1:aDeBQaOCvIJ1BXV8Lg24sehrdgXXFzm4tIvreTmv77s=
+github.com/franela/goblin v0.0.0-20200409142057-1def193310bb/go.mod h1:VzmDKDJVZI3aJmnRI9VjAn9nJ8qPPsN1fqzr9dqInIo=
+github.com/intdxdt/cmp v0.0.0-20171102110413-58dfeb370ea5 h1:MUMTPeXxc2eWV8qQPGG+7EXdBCWbcsvvWXF/WKleCUE=
+github.com/intdxdt/cmp v0.0.0-20171102110413-58dfeb370ea5/go.mod h1:2hCobpYhPtwa+ghiz9vRqIkJlqj7dAns+cGe7UWgwMs=
+github.com/intdxdt/dbits v0.0.0-20171026062838-f7e9caad92f4/go.mod h1:GLKbRshq9XwOsyiyfx2vRXbKAeDBwo8uNb6pLPDipr4=
+github.com/intdxdt/heap v0.0.0-20180830201411-bfa61463ae8b h1:bhxl74DHXv67coECwjBhxYaR7AyLz/dp4iCZBMelgQE=
+github.com/intdxdt/heap v0.0.0-20180830201411-bfa61463ae8b/go.mod h1:rftfIJ/6uLm3AYAFvmGu4Z017rZVaOrQ2Qsnjl2wKNs=
+github.com/intdxdt/math v1.0.0 h1:zjwziZDSJwuxg6gTY12U2cDoZpAt3sFlpbJzFMaD4qk=
+github.com/intdxdt/math v1.0.0/go.mod h1:/iQnUD7sXRLoOziKeJ628KqhSF3GQi7HdQ3LsbgiKpk=
+github.com/intdxdt/mbr v1.0.0 h1:e6ojEZTyuKZcTw9Epy7W+CCj9FJ99bOuHwiN08kAnEk=
+github.com/intdxdt/mbr v1.0.0/go.mod h1:uXexpyXa+e2CojlaEdT6NAIbzRQh+Egt3m7rTo9x6Yc=
+github.com/intdxdt/robust v1.0.0 h1:x5pNk5s7wF4I2s60zM57XSatrK7QXagOctFjmahrsUU=
+github.com/intdxdt/robust v1.0.0/go.mod h1:uIGXMmYcuFItUjeG37oxt0x7RFXdL4MEfXP4uVstLZ0=
+github.com/intdxdt/twiddle v0.0.0-20180605015803-8a5d3aeb2e67/go.mod h1:aos2CXzSXDP82nQmZbxyi3w7TAdnhNZ2kLRm3pI5SjI=
