@@ -6,7 +6,7 @@ from a terminal (type top10 in pprof) :
 ```bash
 sh test_bench_cover.sh 
 ```
-coverage: 99.8% of statements
+coverage: 100.0% of statements
 
 ### credits
 based on js-version - [rbush](https://github.com/mourner/rbush)

@@ -11,17 +11,17 @@ import (
 
 type Boxes []*mbr.MBR
 
-//Len for sort interface
+// Len for sort interface
 func (o Boxes) Len() int {
 	return len(o)
 }
 
-//Swap for sort interface
+// Swap for sort interface
 func (o Boxes) Swap(i, j int) {
 	o[i], o[j] = o[j], o[i]
 }
 
-//Less sorts boxes lexicographically
+// Less sorts boxes lexicographically
 func (o Boxes) Less(i, j int) bool {
 	var d = o[i].MinX - o[j].MinX
 	if d == 0 || math.Abs(d) < math.EPSILON {
@@ -60,13 +60,22 @@ func getObjs(nodes []node) []BoxObject {
 	return objs
 }
 
-//data from rbush 1.4.2
+// data from rbush 1.4.2
 var data = []mbr.MBR{{0, 0, 0, 0}, {10, 10, 10, 10}, {20, 20, 20, 20}, {25, 0, 25, 0}, {35, 10, 35, 10}, {45, 20, 45, 20}, {0, 25, 0, 25}, {10, 35, 10, 35},
 	{20, 45, 20, 45}, {25, 25, 25, 25}, {35, 35, 35, 35}, {45, 45, 45, 45}, {50, 0, 50, 0}, {60, 10, 60, 10}, {70, 20, 70, 20}, {75, 0, 75, 0},
 	{85, 10, 85, 10}, {95, 20, 95, 20}, {50, 25, 50, 25}, {60, 35, 60, 35}, {70, 45, 70, 45}, {75, 25, 75, 25}, {85, 35, 85, 35}, {95, 45, 95, 45},
 	{0, 50, 0, 50}, {10, 60, 10, 60}, {20, 70, 20, 70}, {25, 50, 25, 50}, {35, 60, 35, 60}, {45, 70, 45, 70}, {0, 75, 0, 75}, {10, 85, 10, 85},
 	{20, 95, 20, 95}, {25, 75, 25, 75}, {35, 85, 35, 85}, {45, 95, 45, 95}, {50, 50, 50, 50}, {60, 60, 60, 60}, {70, 70, 70, 70}, {75, 50, 75, 50},
 	{85, 60, 85, 60}, {95, 70, 95, 70}, {50, 75, 50, 75}, {60, 85, 60, 85}, {70, 95, 70, 95}, {75, 75, 75, 75}, {85, 85, 85, 85}, {95, 95, 95, 95}}
+
+var emptyData = []mbr.MBR{
+	{math.Inf(-1), math.Inf(-1), math.Inf(1), math.Inf(1)},
+	{math.Inf(-1), math.Inf(-1), math.Inf(1), math.Inf(1)},
+	{math.Inf(-1), math.Inf(-1), math.Inf(1), math.Inf(1)},
+	{math.Inf(-1), math.Inf(-1), math.Inf(1), math.Inf(1)},
+	{math.Inf(-1), math.Inf(-1), math.Inf(1), math.Inf(1)},
+	{math.Inf(-1), math.Inf(-1), math.Inf(1), math.Inf(1)},
+}
 
 func TestRtreeRbush(t *testing.T) {
 	g := goblin.Goblin(t)
@@ -119,6 +128,35 @@ func TestRtreeRbush(t *testing.T) {
 		g.It("#load does nothing if loading empty data", func() {
 			var tree = NewRTree(0).Load(make([]BoxObject, 0))
 			g.Assert(tree.IsEmpty()).IsTrue()
+		})
+
+		g.It("#load handles the insertion of maxEntries + 2 empty bboxes", func() {
+			var tree = NewRTree(4).LoadBoxes(emptyData)
+
+			g.Assert(tree.Data.height).Eql(2)
+			var boxes []*mbr.MBR
+			for i := 0; i < len(emptyData); i++ {
+				boxes = append(boxes, &emptyData[i])
+			}
+			testResults(g, tree.All(), boxes)
+		})
+
+		g.It("#insert handles the insertion of maxEntries + 2 empty bboxes", func() {
+			var tree = NewRTree(4)
+
+			for i := 0; i < len(emptyData); i++ {
+				tree.Insert(&emptyData[i])
+			}
+
+			g.Assert(tree.Data.height).Eql(2)
+			var boxes []*mbr.MBR
+			for i := 0; i < len(emptyData); i++ {
+				boxes = append(boxes, &emptyData[i])
+			}
+			testResults(g, tree.All(), boxes)
+			g.Assert(len(tree.Data.children[0].children)).Eql(4)
+			g.Assert(len(tree.Data.children[1].children)).Eql(2)
+
 		})
 
 		g.It("#load properly splits tree root when merging trees of the same height", func() {
@@ -204,7 +242,7 @@ func TestRtreeRbush(t *testing.T) {
 		})
 
 		g.It("#insert adds an item to an existing tree correctly", func() {
-			var data = []mbr.MBR{{0, 0, 0, 0}, {2, 2, 2, 2}, {1, 1, 1, 1},}
+			var data = []mbr.MBR{{0, 0, 0, 0}, {2, 2, 2, 2}, {1, 1, 1, 1}}
 			var tree = NewRTree(4).LoadBoxes(data)
 
 			var box33 = mbr.CreateMBR(3, 3, 3, 3)
@@ -297,8 +335,8 @@ func TestRtreeRbush(t *testing.T) {
 }
 
 /*
-	g := goblin.Goblin(t)
-	g.Describe("Rtree Tests - From Rbush", func() {
+g := goblin.Goblin(t)
+g.Describe("Rtree Tests - From Rbush", func() {
 */
 func TestRtreeUtil(t *testing.T) {
 	g := goblin.Goblin(t)

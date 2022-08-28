@@ -5,7 +5,7 @@ import (
 	"github.com/intdxdt/mbr"
 )
 
-//Insert item
+// Insert item
 func (tree *RTree) Insert(item BoxObject) *RTree {
 	if item == nil {
 		return tree
@@ -14,7 +14,7 @@ func (tree *RTree) Insert(item BoxObject) *RTree {
 	return tree
 }
 
-//insert - private
+// insert - private
 func (tree *RTree) insert(item BoxObject, level int) {
 	var nd *node
 	var insertPath = make([]*node, 0, tree.maxEntries)
@@ -33,7 +33,7 @@ func (tree *RTree) insert(item BoxObject, level int) {
 	tree.adjustParentBBoxes(item.BBox(), insertPath, level)
 }
 
-//insert - private
+// insert - private
 func (tree *RTree) insertNode(item node, level int) {
 	var nd *node
 	var insertPath []*node
@@ -60,7 +60,7 @@ func (tree *RTree) splitOnOverflow(level int, insertPath []*node) (int, []*node)
 	return level, insertPath
 }
 
-//_chooseSubtree select child of node and updates path to selected node.
+// _chooseSubtree select child of node and updates path to selected node.
 func chooseSubtree(bbox *mbr.MBR, nd *node, level int, path []*node) (*node, []*node) {
 	var child, targetNode *node
 	var minArea, minEnlargement float64
@@ -124,18 +124,22 @@ func chooseSubtree(bbox *mbr.MBR, nd *node, level int, path []*node) (*node, []*
 			}
 		}
 
-		nd = targetNode
+		if targetNode == nil {
+			nd = &nd.children[0]
+		} else {
+			nd = targetNode
+		}
 	}
 
 	return nd, path
 }
 
-//computes box margin
+// computes box margin
 func bboxMargin(a *mbr.MBR) float64 {
 	return (a.MaxX - a.MinX) + (a.MaxY - a.MinY)
 }
 
-//computes the intersection area of two mbrs
+// computes the intersection area of two mbrs
 func intersectionArea(a, b *mbr.MBR) float64 {
 	var minx, miny, maxx, maxy = a.MinX, a.MinY, a.MaxX, a.MaxY
 
@@ -162,12 +166,12 @@ func intersectionArea(a, b *mbr.MBR) float64 {
 	return (maxx - minx) * (maxy - miny)
 }
 
-//contains tests whether a contains b
+// contains tests whether a contains b
 func contains(a, b *mbr.MBR) bool {
 	return b.MinX >= a.MinX && b.MaxX <= a.MaxX && b.MinY >= a.MinY && b.MaxY <= a.MaxY
 }
 
-//intersects tests a intersect b (MBR)
+// intersects tests a intersect b (MBR)
 func intersects(a, b *mbr.MBR) bool {
 	return !(b.MinX > a.MaxX || b.MaxX < a.MinX || b.MinY > a.MaxY || b.MaxY < a.MinY)
 }
