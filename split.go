@@ -34,10 +34,10 @@ func (tree *RTree) splitRoot(nd, other node) {
 	calcBBox(&tree.Data)
 }
 
-// _chooseSplitIndex selects split index.
+// chooseSplitIndex selects split index.
 func (tree *RTree) chooseSplitIndex(nd *node, m, M int) int {
-	var i, index int
-	var assigned bool //index assigned
+	var i int
+	var index = -1
 	var overlap, area, minOverlap, minArea float64
 
 	minOverlap, minArea = math.Inf(1), math.Inf(1)
@@ -53,8 +53,6 @@ func (tree *RTree) chooseSplitIndex(nd *node, m, M int) int {
 		if overlap < minOverlap {
 			minOverlap = overlap
 			index = i
-			assigned = true
-
 			if area < minArea {
 				minArea = area
 			}
@@ -63,15 +61,14 @@ func (tree *RTree) chooseSplitIndex(nd *node, m, M int) int {
 			if area < minArea {
 				minArea = area
 				index = i
-				assigned = true
 			}
 		}
 	}
 
-	if assigned {
-		return index
+	if index < 0 {
+		return M - m
 	} //else
-	return M - m
+	return index
 }
 
 // _chooseSplitAxis selects split axis : sorts node children
