@@ -61,7 +61,7 @@ func (tree *RTree) splitOnOverflow(level int, insertPath []*node) (int, []*node)
 }
 
 // _chooseSubtree select child of node and updates path to selected node.
-func chooseSubtree(bbox *mbr.MBR, nd *node, level int, path []*node) (*node, []*node) {
+func chooseSubtree(bbox *mbr.MBR[float64], nd *node, level int, path []*node) (*node, []*node) {
 	var child, targetNode *node
 	var minArea, minEnlargement float64
 	var area, enlargement, d float64
@@ -72,7 +72,7 @@ func chooseSubtree(bbox *mbr.MBR, nd *node, level int, path []*node) (*node, []*
 	var b_minx, b_miny = bbox.MinX, bbox.MinY
 	var b_maxx, b_maxy = bbox.MaxX, bbox.MaxY
 
-	var chbox *mbr.MBR
+	var chbox *mbr.MBR[float64]
 
 	for {
 		path = append(path, nd)
@@ -135,12 +135,12 @@ func chooseSubtree(bbox *mbr.MBR, nd *node, level int, path []*node) (*node, []*
 }
 
 // computes box margin
-func bboxMargin(a *mbr.MBR) float64 {
+func bboxMargin(a *mbr.MBR[float64]) float64 {
 	return (a.MaxX - a.MinX) + (a.MaxY - a.MinY)
 }
 
 // computes the intersection area of two mbrs
-func intersectionArea(a, b *mbr.MBR) float64 {
+func intersectionArea(a, b *mbr.MBR[float64]) float64 {
 	var minx, miny, maxx, maxy = a.MinX, a.MinY, a.MaxX, a.MaxY
 
 	if !intersects(a, b) {
@@ -167,11 +167,11 @@ func intersectionArea(a, b *mbr.MBR) float64 {
 }
 
 // contains tests whether a contains b
-func contains(a, b *mbr.MBR) bool {
+func contains(a, b *mbr.MBR[float64]) bool {
 	return b.MinX >= a.MinX && b.MaxX <= a.MaxX && b.MinY >= a.MinY && b.MaxY <= a.MaxY
 }
 
 // intersects tests a intersect b (MBR)
-func intersects(a, b *mbr.MBR) bool {
+func intersects(a, b *mbr.MBR[float64]) bool {
 	return !(b.MinX > a.MaxX || b.MaxX < a.MinX || b.MinY > a.MaxY || b.MaxY < a.MinY)
 }

@@ -6,10 +6,10 @@ import (
 	"github.com/intdxdt/mbr"
 )
 
-//KObj instance struct
+// KObj instance struct
 type KObj struct {
 	node   *node
-	MBR    *mbr.MBR
+	MBR    *mbr.MBR[float64]
 	IsItem bool
 	Dist   float64
 }
@@ -18,12 +18,12 @@ func (kobj *KObj) GetItem() BoxObject {
 	return kobj.node.item
 }
 
-//String representation of knn object
+// String representation of knn object
 func (kobj *KObj) String() string {
 	return fmt.Sprintf("%v -> %v", kobj.node.bbox.String(), kobj.Dist)
 }
 
-//Compare - cmp interface
+// Compare - cmp interface
 func kobjCmp(a interface{}, b interface{}) int {
 	var self, other = a.(*KObj), b.(*KObj)
 	var dx = self.Dist - other.Dist

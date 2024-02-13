@@ -5,7 +5,7 @@ import (
 	"github.com/intdxdt/mbr"
 )
 
-//Node at index from slice of pointers , nil if not found
+// Node at index from slice of pointers , nil if not found
 func nodeAtIndex(a []*node, i int) *node {
 	var n = len(a)
 	if i > n-1 || i < 0 || n == 0 {
@@ -14,7 +14,7 @@ func nodeAtIndex(a []*node, i int) *node {
 	return a[i]
 }
 
-//Node at index from slice of nodes , nil if not found
+// Node at index from slice of nodes , nil if not found
 func nodeAtIndex_(a []node, i int) *node {
 	var n = len(a)
 	if i > n-1 || i < 0 || n == 0 {
@@ -23,7 +23,7 @@ func nodeAtIndex_(a []node, i int) *node {
 	return &a[i]
 }
 
-//Pop node
+// Pop node
 func popNode(a []*node) (*node, []*node) {
 	var v *node
 	var n int
@@ -35,14 +35,14 @@ func popNode(a []*node) (*node, []*node) {
 	return v, a[:n]
 }
 
-//Remove node at given index from node slice.
+// Remove node at given index from node slice.
 func removeNode(a []node, i int) []node {
 	var n = len(a) - 1
 	if i > n {
 		return a
 	}
 	//a, a[n] = append(a[:i], a[i+1:]...), nil //panics in gopherjs
-	var b = make([]node, 0, math.MaxInt(n-i, 0))
+	var b = make([]node, 0, math.Max(n-i, 0))
 	if i < n {
 		b = append(b, a[i+1:]...)
 	}
@@ -64,7 +64,7 @@ func popIndex(indxs *[]int) int {
 	return v
 }
 
-//condense node and its path from the root
+// condense node and its path from the root
 func (tree *RTree) condense(path []*node) {
 	var parent *node
 	var i = len(path) - 1
@@ -90,9 +90,9 @@ func (tree *RTree) condense(path []*node) {
 	}
 }
 
-//Remove Item from RTree
+// Remove Item from RTree
 func (tree *RTree) Remove(item BoxObject) *RTree {
-	if (item == nil) {
+	if item == nil {
 		return tree
 	}
 	tree.removeItem(item.BBox(),
@@ -112,7 +112,7 @@ func (tree *RTree) Remove(item BoxObject) *RTree {
 //	return tree
 //}
 
-func (tree *RTree) removeItem(item *mbr.MBR, predicate func(*node, int) bool) *RTree {
+func (tree *RTree) removeItem(item *mbr.MBR[float64], predicate func(*node, int) bool) *RTree {
 	var nd = &tree.Data
 	var parent *node
 	var bbox = item.BBox()

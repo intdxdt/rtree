@@ -4,18 +4,18 @@ import (
 	"github.com/intdxdt/mbr"
 )
 
-//LoadBoxes loads bounding boxes
-func (tree *RTree) LoadBoxes(data []mbr.MBR) *RTree {
+// LoadBoxes loads bounding boxes
+func (tree *RTree) LoadBoxes(data []mbr.MBR[float64]) *RTree {
 	var items = make([]BoxObject, 0, len(data))
 	for i := range data {
-		items = append(items,  &data[i])
+		items = append(items, &data[i])
 	}
 	return tree.Load(items)
 }
 
-//Load implements bulk loading
+// Load implements bulk loading
 func (tree *RTree) Load(items []BoxObject) *RTree {
-	var n  = len(items)
+	var n = len(items)
 	if n < tree.minEntries {
 		for i := range items {
 			tree.Insert(items[i])
@@ -27,7 +27,6 @@ func (tree *RTree) Load(items []BoxObject) *RTree {
 	for i := range items {
 		data = append(data, items[i])
 	}
-
 
 	// recursively build the tree with the given data from stratch using OMT algorithm
 	var nd = tree.buildTree(data, 0, n-1, 0)

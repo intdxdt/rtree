@@ -5,8 +5,8 @@ import (
 	"math"
 )
 
-func emptyMBR() mbr.MBR {
-	return mbr.MBR{
+func emptyMBR() mbr.MBR[float64] {
+	return mbr.MBR[float64]{
 		math.Inf(1), math.Inf(1),
 		math.Inf(-1), math.Inf(-1),
 	}
@@ -17,7 +17,7 @@ func (tree *RTree) Clear() *RTree {
 	return tree
 }
 
-//IsEmpty checks for empty tree
+// IsEmpty checks for empty tree
 func (tree *RTree) IsEmpty() bool {
 	return len(tree.Data.children) == 0
 }

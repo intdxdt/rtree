@@ -4,8 +4,8 @@ import (
 	"github.com/intdxdt/mbr"
 )
 
-//Search item
-func (tree *RTree) Search(query mbr.MBR) []BoxObject {
+// Search item
+func (tree *RTree) Search(query mbr.MBR[float64]) []BoxObject {
 	var bbox = &query
 	var result []BoxObject
 	var nd = &tree.Data
@@ -16,7 +16,7 @@ func (tree *RTree) Search(query mbr.MBR) []BoxObject {
 
 	var nodesToSearch []*node
 	var child *node
-	var childBBox *mbr.MBR
+	var childBBox *mbr.MBR[float64]
 
 	for {
 		for i, length := 0, len(nd.children); i < length; i++ {
@@ -47,12 +47,12 @@ func (tree *RTree) Search(query mbr.MBR) []BoxObject {
 	return result
 }
 
-//All items from  root node
+// All items from  root node
 func (tree *RTree) All() []BoxObject {
 	return all(&tree.Data, []BoxObject{})
 }
 
-//all - fetch all items from node
+// all - fetch all items from node
 func all(nd *node, result []BoxObject) []BoxObject {
 	var nodesToSearch []*node
 	for {

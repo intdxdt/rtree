@@ -4,18 +4,18 @@ import (
 	"github.com/intdxdt/mbr"
 )
 
-//Node type for internal rtree node
+// Node type for internal rtree node
 type node struct {
 	children []node
 	item     BoxObject
 	height   int
 	leaf     bool
-	bbox     mbr.MBR
+	bbox     mbr.MBR[float64]
 }
 
-//Creates a node
+// Creates a node
 func createNode(item BoxObject, height int, leaf bool, children []node) node {
-	var box mbr.MBR
+	var box mbr.MBR[float64]
 	if item == nil {
 		box = emptyMBR()
 	} else {
@@ -30,7 +30,7 @@ func createNode(item BoxObject, height int, leaf bool, children []node) node {
 	}
 }
 
-//node type for internal node
+// node type for internal node
 func newLeafNode(item BoxObject) node {
 	return node{
 		children: []node{},
@@ -41,22 +41,22 @@ func newLeafNode(item BoxObject) node {
 	}
 }
 
-//MBR returns bbox property
-func (nd *node) BBox() *mbr.MBR {
+// MBR returns bbox property
+func (nd *node) BBox() *mbr.MBR[float64] {
 	return &nd.bbox
 }
 
-//GetItem from node
+// GetItem from node
 func (nd *node) GetItem() BoxObject {
 	return nd.item
 }
 
-//add child
+// add child
 func (nd *node) addChild(child node) {
 	nd.children = append(nd.children, child)
 }
 
-//Constructs children of node
+// Constructs children of node
 func makeChildren(items []BoxObject) []node {
 	var chs = make([]node, 0, len(items))
 	for i := range items {

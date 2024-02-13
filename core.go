@@ -16,11 +16,10 @@ const (
 
 type sortBy int
 type BoxObject interface {
-    BBox() *mbr.MBR
+	BBox() *mbr.MBR[float64]
 }
 
 var inf = math.Inf(1)
-
 
 func maxEntries(x int) int {
 	return maxInt(4, x)
